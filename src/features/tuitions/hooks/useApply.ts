@@ -5,10 +5,13 @@
  */
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
-import type { CreateApplicationInput } from '@/types'
+import { useAuth } from '@/features/auth'
+import { UserService } from '@/services'
+import type { CreateApplicationInput, User } from '@/types'
 import { useApplyForTuition } from './useApplicationQueries'
 import { applicationFormSchema, type ApplicationFormData } from '../validators'
 
@@ -20,6 +23,14 @@ export interface UseApplyOptions {
 export const useApply = (options: UseApplyOptions) => {
     const { tuitionId, onSuccess } = options
     const [isOpen, setIsOpen] = useState(false)
+    const { user } = useAuth()
+
+    // Fetch tutor's profile data
+    const { data: tutorProfile } = useQuery<User>({
+        queryKey: ['tutor-profile', user?.email],
+        queryFn: () => UserService.getProfile(),
+        enabled: !!user && user.role === 'tutor',
+    })
 
     // React Hook Form with Zod validation
     const form = useForm<ApplicationFormData>({
@@ -34,6 +45,21 @@ export const useApply = (options: UseApplyOptions) => {
             tuitionId,
         },
     })
+
+    // Update form with tutor's profile data
+    useEffect(() => {
+        if (tutorProfile && isOpen) {
+            form.reset({
+                qualifications: tutorProfile.qualifications || '',
+                experience: tutorProfile.experience || '',
+                expectedSalary: 0,
+                availability: '',
+                coverLetter: '',
+                contactNumber: tutorProfile.phone || '',
+                tuitionId,
+            })
+        }
+    }, [tutorProfile, isOpen, form, tuitionId])
 
     // Apply for tuition mutation
     const applyMutation = useApplyForTuition()

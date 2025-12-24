@@ -1,23 +1,28 @@
-// #TODO: Tutor Dashboard - My Applications Page
-// #TODO: Track application status (Pending/Approved/Rejected)
-// #TODO: Update application (until approved)
-// #TODO: Delete application (until approved)
+/**
+ * Tutor Dashboard - My Applications Page
+ * Track application status (Pending/Approved/Rejected)
+ * Update/Delete applications (until approved) with real API
+ */
 
+import { useDeleteApplication, useTutorApplications, useUpdateApplication } from '@/features/dashboard/hooks'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
-import { CheckCircle, Clock, Eye, MoreHorizontal, Pencil, Trash, XCircle } from 'lucide-react'
-import { useState } from 'react'
+import type { ApplicationStatus } from '@/types'
+import { CheckCircle, Clock, Eye, Loader2, MoreHorizontal, Pencil, RefreshCw, Trash, XCircle } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router'
 
-// #TODO: Status badge variant helper
-const getStatusVariant = (status: string) => {
+// Status badge variant helper
+const getStatusVariant = (status: ApplicationStatus) => {
     switch (status) {
         case 'approved':
             return 'default'
@@ -30,8 +35,8 @@ const getStatusVariant = (status: string) => {
     }
 }
 
-// #TODO: Status icon helper
-const StatusIcon = ({ status }: { status: string }) => {
+// Status icon helper
+const StatusIcon = ({ status }: { status: ApplicationStatus }) => {
     switch (status) {
         case 'approved':
             return <CheckCircle className="h-4 w-4 text-green-500" />
@@ -44,8 +49,34 @@ const StatusIcon = ({ status }: { status: string }) => {
     }
 }
 
+// Format date helper
+const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    })
+}
+
+// Loading Skeleton
+const TableSkeleton = () => (
+    <>
+        {[1, 2, 3].map((i) => (
+            <TableRow key={i}>
+                {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                    <TableCell key={j}>
+                        <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                ))}
+            </TableRow>
+        ))}
+    </>
+)
+
 const MyApplicationsPage = () => {
-    // #TODO: State for edit dialog
+    const navigate = useNavigate()
+
+    // State for edit dialog
     const [editApplication, setEditApplication] = useState<{
         _id: string
         qualifications: string
@@ -53,133 +84,98 @@ const MyApplicationsPage = () => {
         expectedSalary: number
     } | null>(null)
 
-    // #TODO: Fetch my applications from backend
-    // const { data: applications, isLoading, refetch } = useQuery({
-    //   queryKey: ['my-applications'],
-    //   queryFn: fetchMyApplications,
-    // });
+    // Fetch applications from backend
+    const { data, isLoading, error, refetch } = useTutorApplications()
+    const updateMutation = useUpdateApplication()
+    const deleteMutation = useDeleteApplication()
 
-    // #TODO: Update application mutation
-    // const updateMutation = useMutation({
-    //   mutationFn: updateApplication,
-    //   onSuccess: () => {
-    //     toast.success('Application updated successfully');
-    //     refetch();
-    //     setEditApplication(null);
-    //   },
-    // });
+    // Extract applications with fallback
+    const applications = useMemo(() => data?.data || [], [data])
 
-    // #TODO: Delete application mutation
-    // const deleteMutation = useMutation({
-    //   mutationFn: deleteApplication,
-    //   onSuccess: () => {
-    //     toast.success('Application deleted successfully');
-    //     refetch();
-    //   },
-    // });
+    // Calculate stats
+    const stats = useMemo(() => {
+        return {
+            total: applications.length,
+            approved: applications.filter((a) => a.status === 'approved').length,
+            pending: applications.filter((a) => a.status === 'pending').length,
+            rejected: applications.filter((a) => a.status === 'rejected').length,
+        }
+    }, [applications])
 
-    // #TODO: Handle update
+    // Handle update
     const handleUpdate = () => {
         if (editApplication) {
-            // updateMutation.mutate(editApplication);
-            setEditApplication(null)
+            updateMutation.mutate(
+                {
+                    id: editApplication._id,
+                    data: {
+                        qualifications: editApplication.qualifications,
+                        experience: editApplication.experience,
+                        expectedSalary: editApplication.expectedSalary,
+                    },
+                },
+                {
+                    onSuccess: () => setEditApplication(null),
+                }
+            )
         }
     }
 
-    // #TODO: Handle delete
-    const handleDelete = (_id: string) => {
-        // deleteMutation.mutate(id);
+    // Handle delete
+    const handleDelete = (id: string) => {
+        deleteMutation.mutate(id)
     }
 
-    // Mock data for demonstration
-    const mockApplications = [
-        {
-            _id: 'app1',
-            tuition: {
-                _id: 't1',
-                title: 'Mathematics Tutor Needed',
-                subject: 'Mathematics',
-                class: 'Class 10',
-                location: 'Dhaka',
-                budget: 8000,
-            },
-            qualifications: 'MSc in Mathematics from University of Dhaka',
-            experience: '5 years of teaching experience in HSC level mathematics',
-            expectedSalary: 7500,
-            status: 'pending',
-            createdAt: '2024-01-25',
-        },
-        {
-            _id: 'app2',
-            tuition: {
-                _id: 't2',
-                title: 'Physics Home Tutor',
-                subject: 'Physics',
-                class: 'HSC',
-                location: 'Chittagong',
-                budget: 10000,
-            },
-            qualifications: 'MSc in Physics',
-            experience: '3 years tutoring experience',
-            expectedSalary: 9000,
-            status: 'approved',
-            createdAt: '2024-01-20',
-        },
-        {
-            _id: 'app3',
-            tuition: {
-                _id: 't3',
-                title: 'English Speaking Course',
-                subject: 'English',
-                class: 'Class 8',
-                location: 'Sylhet',
-                budget: 5000,
-            },
-            qualifications: 'BA in English Literature',
-            experience: '2 years teaching experience',
-            expectedSalary: 4500,
-            status: 'rejected',
-            createdAt: '2024-01-15',
-        },
-    ]
+    // Error state
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <p className="text-destructive">Failed to load applications</p>
+                <Button onClick={() => refetch()} variant="outline">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Retry
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
-            {/* #TODO: Page Header */}
+            {/* Page Header */}
             <div>
                 <h1 className="text-2xl font-bold">My Applications</h1>
                 <p className="text-muted-foreground">Track and manage your tuition applications</p>
             </div>
 
-            {/* #TODO: Stats Cards */}
+            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription>Total Applications</CardDescription>
-                        <CardTitle className="text-3xl">{mockApplications.length}</CardTitle>
+                        <CardTitle className="text-3xl">{stats.total}</CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription>Approved</CardDescription>
-                        <CardTitle className="text-3xl text-green-600">{mockApplications.filter((a) => a.status === 'approved').length}</CardTitle>
+                        <CardTitle className="text-3xl text-green-600">{stats.approved}</CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription>Pending</CardDescription>
-                        <CardTitle className="text-3xl text-yellow-600">{mockApplications.filter((a) => a.status === 'pending').length}</CardTitle>
+                        <CardTitle className="text-3xl text-yellow-600">{stats.pending}</CardTitle>
                     </CardHeader>
                 </Card>
                 <Card>
                     <CardHeader className="pb-2">
                         <CardDescription>Rejected</CardDescription>
-                        <CardTitle className="text-3xl text-red-600">{mockApplications.filter((a) => a.status === 'rejected').length}</CardTitle>
+                        <CardTitle className="text-3xl text-red-600">{stats.rejected}</CardTitle>
                     </CardHeader>
                 </Card>
             </div>
 
-            {/* #TODO: Applications Table */}
+            {/* Applications Table */}
             <Card>
                 <CardHeader>
                     <CardTitle>All Applications</CardTitle>
@@ -199,90 +195,96 @@ const MyApplicationsPage = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockApplications.map((application) => (
-                                <TableRow key={application._id}>
-                                    <TableCell className="font-medium">{application.tuition.title}</TableCell>
-                                    <TableCell>
-                                        {application.tuition.subject} • {application.tuition.class}
-                                    </TableCell>
-                                    <TableCell>{application.tuition.location}</TableCell>
-                                    <TableCell>৳{application.expectedSalary}</TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <StatusIcon status={application.status} />
-                                            <Badge variant={getStatusVariant(application.status)}>{application.status.charAt(0).toUpperCase() + application.status.slice(1)}</Badge>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{application.createdAt}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem>
-                                                    <Eye className="mr-2 h-4 w-4" />
-                                                    View Tuition
-                                                </DropdownMenuItem>
-
-                                                {/* #TODO: Edit option (only for pending) */}
-                                                {application.status === 'pending' && (
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <DropdownMenuItem
-                                                                onSelect={(e) => {
-                                                                    e.preventDefault()
-                                                                    setEditApplication({
-                                                                        _id: application._id,
-                                                                        qualifications: application.qualifications,
-                                                                        experience: application.experience,
-                                                                        expectedSalary: application.expectedSalary,
-                                                                    })
-                                                                }}
-                                                            >
-                                                                <Pencil className="mr-2 h-4 w-4" />
-                                                                Edit
-                                                            </DropdownMenuItem>
-                                                        </DialogTrigger>
-                                                    </Dialog>
-                                                )}
-
-                                                {/* #TODO: Delete option (only for pending) */}
-                                                {application.status === 'pending' && (
-                                                    <AlertDialog>
-                                                        <AlertDialogTrigger asChild>
-                                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                                                <Trash className="mr-2 h-4 w-4" />
-                                                                Delete
-                                                            </DropdownMenuItem>
-                                                        </AlertDialogTrigger>
-                                                        <AlertDialogContent>
-                                                            <AlertDialogHeader>
-                                                                <AlertDialogTitle>Delete Application?</AlertDialogTitle>
-                                                                <AlertDialogDescription>Are you sure you want to delete this application? This action cannot be undone.</AlertDialogDescription>
-                                                            </AlertDialogHeader>
-                                                            <AlertDialogFooter>
-                                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                                <AlertDialogAction onClick={() => handleDelete(application._id)} className="bg-destructive text-destructive-foreground">
-                                                                    Delete
-                                                                </AlertDialogAction>
-                                                            </AlertDialogFooter>
-                                                        </AlertDialogContent>
-                                                    </AlertDialog>
-                                                )}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                            {isLoading ? (
+                                <TableSkeleton />
+                            ) : applications.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="text-center py-8">
+                                        <p className="text-muted-foreground">No applications found</p>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : (
+                                applications.map((application) => (
+                                    <TableRow key={application._id}>
+                                        <TableCell className="font-medium">{application.tuition?.subject || 'N/A'}</TableCell>
+                                        <TableCell>
+                                            {application.tuition?.subject || 'N/A'} • {application.tuition?.class || 'N/A'}
+                                        </TableCell>
+                                        <TableCell>{application.tuition?.location || 'N/A'}</TableCell>
+                                        <TableCell>৳{application.expectedSalary?.toLocaleString() || 0}</TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <StatusIcon status={application.status} />
+                                                <Badge variant={getStatusVariant(application.status)}>{application.status?.charAt(0).toUpperCase() + application.status?.slice(1) || 'N/A'}</Badge>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>{application.createdAt ? formatDate(application.createdAt) : 'N/A'}</TableCell>
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuItem onClick={() => navigate(`/tuitions/${application.tuitionId}`)}>
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        View Tuition
+                                                    </DropdownMenuItem>
+
+                                                    {/* Edit option (only for pending) */}
+                                                    {application.status === 'pending' && (
+                                                        <DropdownMenuItem
+                                                            onSelect={(e) => {
+                                                                e.preventDefault()
+                                                                setEditApplication({
+                                                                    _id: application._id,
+                                                                    qualifications: application.qualifications,
+                                                                    experience: application.experience,
+                                                                    expectedSalary: application.expectedSalary,
+                                                                })
+                                                            }}
+                                                        >
+                                                            <Pencil className="mr-2 h-4 w-4" />
+                                                            Edit
+                                                        </DropdownMenuItem>
+                                                    )}
+
+                                                    {/* Delete option (only for pending) */}
+                                                    {application.status === 'pending' && (
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger asChild>
+                                                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                                                                    {deleteMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trash className="mr-2 h-4 w-4" />}
+                                                                    Delete
+                                                                </DropdownMenuItem>
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle>Delete Application?</AlertDialogTitle>
+                                                                    <AlertDialogDescription>Are you sure you want to delete this application? This action cannot be undone.</AlertDialogDescription>
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                    <AlertDialogAction onClick={() => handleDelete(application._id)} className="bg-destructive text-destructive-foreground">
+                                                                        Delete
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                    )}
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
             </Card>
 
-            {/* #TODO: Edit Application Dialog */}
+            {/* Edit Application Dialog */}
             <Dialog open={!!editApplication} onOpenChange={() => setEditApplication(null)}>
                 <DialogContent>
                     <DialogHeader>
@@ -339,7 +341,10 @@ const MyApplicationsPage = () => {
                         <Button variant="outline" onClick={() => setEditApplication(null)}>
                             Cancel
                         </Button>
-                        <Button onClick={handleUpdate}>Save Changes</Button>
+                        <Button onClick={handleUpdate} disabled={updateMutation.isPending}>
+                            {updateMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Save Changes
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

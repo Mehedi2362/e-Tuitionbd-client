@@ -1,7 +1,7 @@
 // ==================== Application Service ====================
 import { APPLICATION_ROUTES } from '@/shared/application'
 import { privateAxios } from '@/services/api'
-import type { ApiResponse, Application, ApplicationStatus, CreateApplicationInput, PaginatedResponse } from '@/types'
+import type { ApiResponse, Application, ApplicationStatus, CreateApplicationInput, UpdateApplicationInput, PaginatedResponse } from '@/types'
 
 // ==================== Query Params ====================
 export interface ApplicationQueryParams {
@@ -29,6 +29,10 @@ export const ApplicationService = {
         privateAxios.post<ApiResponse<Application>>(APPLICATION_ROUTES.BY_TUITION(tuitionId), application || {})
             .then(res => res.data.data!),
 
+    update: (id: string, data: UpdateApplicationInput): Promise<Application> =>
+        privateAxios.patch<ApiResponse<Application>>(APPLICATION_ROUTES.UPDATE(id), data)
+            .then(res => res.data.data!),
+
     accept: (id: string): Promise<Application> =>
         privateAxios.patch<ApiResponse<Application>>(APPLICATION_ROUTES.ACCEPT(id), { status: 'accepted' })
             .then(res => res.data.data!),
@@ -38,5 +42,5 @@ export const ApplicationService = {
             .then(res => res.data.data!),
 
     withdraw: (id: string): Promise<void> =>
-        privateAxios.delete(APPLICATION_ROUTES.BY_ID(id)).then(() => { })
+        privateAxios.delete(APPLICATION_ROUTES.DELETE(id)).then(() => { })
 }

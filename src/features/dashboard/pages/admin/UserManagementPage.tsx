@@ -1,9 +1,11 @@
-// #TODO: Admin Dashboard - User Management Page
-// #TODO: View all users (name, email, image, status, role)
-// #TODO: Update user information
-// #TODO: Change user roles (Student/Tutor/Admin)
-// #TODO: Delete user accounts
+/**
+ * Admin Dashboard - User Management Page
+ * View all users (name, email, image, status, role)
+ * Update user information, change roles, delete accounts
+ * Real API integration with fallback handling
+ */
 
+import { useAdminUsers, useDeleteUser, useUpdateUserRole, useUpdateUserStatus } from '@/features/dashboard/hooks'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -12,11 +14,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { GraduationCap, MoreHorizontal, Pencil, Search, Shield, Trash, UserCog, Users } from 'lucide-react'
-import { useState } from 'react'
+import type { User } from '@/types'
+import { GraduationCap, MoreHorizontal, Pencil, RefreshCw, Search, Shield, Trash, UserCog, Users } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
-// #TODO: Role badge variant helper
+// Role badge variant helper
 const getRoleVariant = (role: string) => {
     switch (role) {
         case 'admin':
@@ -30,7 +34,7 @@ const getRoleVariant = (role: string) => {
     }
 }
 
-// #TODO: Status badge variant helper
+// Status badge variant helper
 const getStatusVariant = (status: string) => {
     switch (status) {
         case 'active':
@@ -44,140 +48,158 @@ const getStatusVariant = (status: string) => {
     }
 }
 
-const UserManagementPage = () => {
-    // #TODO: State for search
-    const [searchQuery, setSearchQuery] = useState('')
+// Format date helper
+const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    })
+}
 
-    // #TODO: State for role filter
+// Loading Skeleton
+const StatCardSkeleton = () => (
+    <Card>
+        <CardHeader className="pb-2">
+            <Skeleton className="h-4 w-20" />
+        </CardHeader>
+        <CardContent>
+            <Skeleton className="h-8 w-16" />
+        </CardContent>
+    </Card>
+)
+
+const TableSkeleton = () => (
+    <>
+        {[1, 2, 3, 4].map((i) => (
+            <TableRow key={i}>
+                {[1, 2, 3, 4, 5, 6, 7].map((j) => (
+                    <TableCell key={j}>
+                        <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                ))}
+            </TableRow>
+        ))}
+    </>
+)
+
+const UserManagementPage = () => {
+    // State for search and filters
+    const [searchQuery, setSearchQuery] = useState('')
     const [roleFilter, setRoleFilter] = useState('all')
 
-    // #TODO: Fetch all users from backend
-    // const { data: users, isLoading, refetch } = useQuery({
-    //   queryKey: ['admin-users', searchQuery, roleFilter],
-    //   queryFn: () => fetchAllUsers({ search: searchQuery, role: roleFilter }),
-    // });
+    // Fetch all users from backend with real API
+    const { data, isLoading, error, refetch } = useAdminUsers({
+        search: searchQuery || undefined,
+        role: roleFilter !== 'all' ? roleFilter : undefined,
+    })
 
-    // #TODO: Update user role mutation
-    // const updateRoleMutation = useMutation({
-    //   mutationFn: updateUserRole,
-    //   onSuccess: () => {
-    //     toast.success('User role updated');
-    //     refetch();
-    //   },
-    // });
+    // Mutations
+    const updateRoleMutation = useUpdateUserRole()
+    const updateStatusMutation = useUpdateUserStatus()
+    const deleteUserMutation = useDeleteUser()
 
-    // #TODO: Delete user mutation
-    // const deleteUserMutation = useMutation({
-    //   mutationFn: deleteUser,
-    //   onSuccess: () => {
-    //     toast.success('User deleted');
-    //     refetch();
-    //   },
-    // });
+    // Extract users with fallback
+    const users = data?.data || []
+    const total = data?.total || 0
 
-    // #TODO: Handle role change
-    const handleRoleChange = (_userId: string, _newRole: string) => {
-        // updateRoleMutation.mutate({ userId, role: newRole });
+    // Calculate stats
+    const stats = useMemo(() => {
+        return {
+            total: total || 0,
+            students: users.filter((u) => u.role === 'student').length,
+            tutors: users.filter((u) => u.role === 'tutor').length,
+            admins: users.filter((u) => u.role === 'admin').length,
+        }
+    }, [users, total])
+
+    // Handle role change
+    const handleRoleChange = (email: string, newRole: string) => {
+        updateRoleMutation.mutate({ email, role: newRole })
     }
 
-    // #TODO: Handle delete user
-    const handleDeleteUser = (_userId: string) => {
-        // deleteUserMutation.mutate(userId);
+    // Handle status change
+    const handleStatusChange = (email: string, newStatus: string) => {
+        updateStatusMutation.mutate({ email, status: newStatus })
     }
 
-    // Mock data for demonstration
-    const mockUsers = [
-        {
-            _id: '1',
-            name: 'John Doe',
-            email: 'john@email.com',
-            phone: '+880 1700-000001',
-            photoUrl: '',
-            role: 'student',
-            status: 'active',
-            createdAt: '2024-01-15',
-        },
-        {
-            _id: '2',
-            name: 'Jane Smith',
-            email: 'jane@email.com',
-            phone: '+880 1700-000002',
-            photoUrl: '',
-            role: 'tutor',
-            status: 'active',
-            createdAt: '2024-01-10',
-        },
-        {
-            _id: '3',
-            name: 'Admin User',
-            email: 'admin@etuitionbd.com',
-            phone: '+880 1700-000003',
-            photoUrl: '',
-            role: 'admin',
-            status: 'active',
-            createdAt: '2024-01-01',
-        },
-        {
-            _id: '4',
-            name: 'Mike Johnson',
-            email: 'mike@email.com',
-            phone: '+880 1700-000004',
-            photoUrl: '',
-            role: 'tutor',
-            status: 'inactive',
-            createdAt: '2024-01-20',
-        },
-    ]
+    // Handle delete user
+    const handleDeleteUser = (email: string) => {
+        deleteUserMutation.mutate(email)
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 gap-4">
+                <p className="text-destructive">Failed to load users</p>
+                <Button onClick={() => refetch()} variant="outline">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Retry
+                </Button>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
-            {/* #TODO: Page Header */}
+            {/* Page Header */}
             <div>
                 <h1 className="text-2xl font-bold">User Management</h1>
                 <p className="text-muted-foreground">Manage all registered users on the platform</p>
             </div>
 
-            {/* #TODO: Stats Cards */}
+            {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardDescription>Total Users</CardDescription>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <CardTitle className="text-2xl">{mockUsers.length}</CardTitle>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardDescription>Students</CardDescription>
-                        <GraduationCap className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <CardTitle className="text-2xl">{mockUsers.filter((u) => u.role === 'student').length}</CardTitle>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardDescription>Tutors</CardDescription>
-                        <UserCog className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <CardTitle className="text-2xl">{mockUsers.filter((u) => u.role === 'tutor').length}</CardTitle>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <CardDescription>Admins</CardDescription>
-                        <Shield className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <CardTitle className="text-2xl">{mockUsers.filter((u) => u.role === 'admin').length}</CardTitle>
-                    </CardContent>
-                </Card>
+                {isLoading ? (
+                    <>
+                        {[1, 2, 3, 4].map((i) => (
+                            <StatCardSkeleton key={i} />
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardDescription>Total Users</CardDescription>
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <CardTitle className="text-2xl">{stats.total}</CardTitle>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardDescription>Students</CardDescription>
+                                <GraduationCap className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <CardTitle className="text-2xl">{stats.students}</CardTitle>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardDescription>Tutors</CardDescription>
+                                <UserCog className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <CardTitle className="text-2xl">{stats.tutors}</CardTitle>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                <CardDescription>Admins</CardDescription>
+                                <Shield className="h-4 w-4 text-muted-foreground" />
+                            </CardHeader>
+                            <CardContent>
+                                <CardTitle className="text-2xl">{stats.admins}</CardTitle>
+                            </CardContent>
+                        </Card>
+                    </>
+                )}
             </div>
 
-            {/* #TODO: Search and Filter */}
+            {/* Search and Filter */}
             <Card>
                 <CardHeader>
                     <CardTitle>All Users</CardTitle>
@@ -203,107 +225,118 @@ const UserManagementPage = () => {
                         </Select>
                     </div>
 
-                    {/* #TODO: Users Table */}
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>User</TableHead>
-                                <TableHead>Email</TableHead>
-                                <TableHead>Phone</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Joined</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {mockUsers.map((user) => (
-                                <TableRow key={user._id}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-3">
-                                            <Avatar>
-                                                <AvatarImage src={user.photoUrl} />
-                                                <AvatarFallback>
-                                                    {user.name
-                                                        .split(' ')
-                                                        .map((n) => n[0])
-                                                        .join('')}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-medium">{user.name}</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.phone}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={getRoleVariant(user.role)}>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</Badge>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant={getStatusVariant(user.status)}>{user.status.charAt(0).toUpperCase() + user.status.slice(1)}</Badge>
-                                    </TableCell>
-                                    <TableCell>{user.createdAt}</TableCell>
-                                    <TableCell className="text-right">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                <DropdownMenuSeparator />
-
-                                                {/* #TODO: Edit User */}
-                                                <DropdownMenuItem>
-                                                    <Pencil className="mr-2 h-4 w-4" />
-                                                    Edit User
-                                                </DropdownMenuItem>
-
-                                                {/* #TODO: Change Role */}
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuLabel>Change Role</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => handleRoleChange(user._id, 'student')}>
-                                                    <GraduationCap className="mr-2 h-4 w-4" />
-                                                    Make Student
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleRoleChange(user._id, 'tutor')}>
-                                                    <UserCog className="mr-2 h-4 w-4" />
-                                                    Make Tutor
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleRoleChange(user._id, 'admin')}>
-                                                    <Shield className="mr-2 h-4 w-4" />
-                                                    Make Admin
-                                                </DropdownMenuItem>
-
-                                                {/* #TODO: Delete User */}
-                                                <DropdownMenuSeparator />
-                                                <AlertDialog>
-                                                    <AlertDialogTrigger asChild>
-                                                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
-                                                            <Trash className="mr-2 h-4 w-4" />
-                                                            Delete User
-                                                        </DropdownMenuItem>
-                                                    </AlertDialogTrigger>
-                                                    <AlertDialogContent>
-                                                        <AlertDialogHeader>
-                                                            <AlertDialogTitle>Delete User?</AlertDialogTitle>
-                                                            <AlertDialogDescription>Are you sure you want to delete this user? This action cannot be undone.</AlertDialogDescription>
-                                                        </AlertDialogHeader>
-                                                        <AlertDialogFooter>
-                                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                            <AlertDialogAction onClick={() => handleDeleteUser(user._id)} className="bg-destructive text-destructive-foreground">
-                                                                Delete
-                                                            </AlertDialogAction>
-                                                        </AlertDialogFooter>
-                                                    </AlertDialogContent>
-                                                </AlertDialog>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
+                    {/* Users Table */}
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>User</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Phone</TableHead>
+                                    <TableHead>Role</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Joined</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {isLoading ? (
+                                    <TableSkeleton />
+                                ) : users.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={7} className="text-center py-8">
+                                            <p className="text-muted-foreground">No users found</p>
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    users.map((user) => (
+                                        <TableRow key={user._id}>
+                                            <TableCell>
+                                                <div className="flex items-center gap-3">
+                                                    <Avatar>
+                                                        <AvatarImage src={user.photoUrl} />
+                                                        <AvatarFallback>
+                                                            {user.name
+                                                                ?.split(' ')
+                                                                .map((n) => n[0])
+                                                                .join('') || 'U'}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <span className="font-medium">{user.name || 'Unknown'}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>{user.email || 'N/A'}</TableCell>
+                                            <TableCell>{user.phone || 'N/A'}</TableCell>
+                                            <TableCell>
+                                                <Badge variant={getRoleVariant(user.role)}>
+                                                    {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || 'N/A'}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant={getStatusVariant(user.status || 'active')}>
+                                                    {(user.status || 'active').charAt(0).toUpperCase() + (user.status || 'active').slice(1)}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>{user.createdAt ? formatDate(user.createdAt) : 'N/A'}</TableCell>
+                                            <TableCell className="text-right">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+
+                                                        {/* Change Role */}
+                                                        <DropdownMenuLabel>Change Role</DropdownMenuLabel>
+                                                        <DropdownMenuItem onClick={() => handleRoleChange(user.email, 'student')} disabled={user.role === 'student'}>
+                                                            <GraduationCap className="mr-2 h-4 w-4" />
+                                                            Make Student
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleRoleChange(user.email, 'tutor')} disabled={user.role === 'tutor'}>
+                                                            <UserCog className="mr-2 h-4 w-4" />
+                                                            Make Tutor
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleRoleChange(user.email, 'admin')} disabled={user.role === 'admin'}>
+                                                            <Shield className="mr-2 h-4 w-4" />
+                                                            Make Admin
+                                                        </DropdownMenuItem>
+
+                                                        {/* Delete User */}
+                                                        <DropdownMenuSeparator />
+                                                        <AlertDialog>
+                                                            <AlertDialogTrigger asChild>
+                                                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive">
+                                                                    <Trash className="mr-2 h-4 w-4" />
+                                                                    Delete User
+                                                                </DropdownMenuItem>
+                                                            </AlertDialogTrigger>
+                                                            <AlertDialogContent>
+                                                                <AlertDialogHeader>
+                                                                    <AlertDialogTitle>Delete User?</AlertDialogTitle>
+                                                                    <AlertDialogDescription>
+                                                                        Are you sure you want to delete this user? This action cannot be undone.
+                                                                    </AlertDialogDescription>
+                                                                </AlertDialogHeader>
+                                                                <AlertDialogFooter>
+                                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                                    <AlertDialogAction onClick={() => handleDeleteUser(user.email)} className="bg-destructive text-destructive-foreground">
+                                                                        Delete
+                                                                    </AlertDialogAction>
+                                                                </AlertDialogFooter>
+                                                            </AlertDialogContent>
+                                                        </AlertDialog>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
         </div>

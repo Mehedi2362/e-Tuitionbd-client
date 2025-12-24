@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useMyPayments } from '@/features/payments'
+import { useStudentPayments } from '@/features/dashboard/hooks'
 import type { Payment, PaymentStatus } from '@/types'
 import { Calendar, CheckCircle, CreditCard, RefreshCw, TrendingUp, XCircle } from 'lucide-react'
 import { useMemo } from 'react'
@@ -104,9 +104,9 @@ const PaymentRow = ({ payment }: { payment: Payment }) => (
 
 const PaymentsPage = () => {
     // Fetch payments with real API
-    const { data, isLoading, error, refetch } = useMyPayments()
+    const { data, isLoading, error, refetch } = useStudentPayments()
 
-    // Extract payments from response
+    // Extract payments from response with fallback
     const payments = data?.data || []
 
     // Calculate stats

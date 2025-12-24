@@ -6,9 +6,9 @@
 
 import { useAuth } from '@/features/auth'
 import { UserService } from '@/services'
-import type { UpdateProfileInput } from '@/types'
+import type { UpdateProfileInput, User } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -52,10 +52,18 @@ const profileKeys = {
 // ==================== Hook ====================
 export const useProfileSettings = (options: UseProfileSettingsOptions = {}) => {
     const { onSuccess } = options
-    const { user, refetch } = useAuth()
+    const { user: authUser, refetch: refetchAuth } = useAuth()
     const queryClient = useQueryClient()
 
-    // Cast user to extended type
+    // Fetch fresh profile data from server
+    const { data: serverProfile } = useQuery<User>({
+        queryKey: profileKeys.current,
+        queryFn: () => UserService.getProfile(),
+        staleTime: 1000 * 60 * 5, // 5 minutes
+    })
+
+    // Use server profile if available, otherwise use auth user
+    const user = serverProfile || authUser
     const extUser = user as ExtendedUser | null
 
     // React Hook Form
@@ -92,7 +100,7 @@ export const useProfileSettings = (options: UseProfileSettingsOptions = {}) => {
         mutationFn: (data: UpdateProfileInput) => UserService.updateProfile(data),
         onSuccess: async () => {
             queryClient.invalidateQueries({ queryKey: profileKeys.current })
-            await refetch()
+            await refetchAuth()
             toast.success('প্রোফাইল সফলভাবে আপডেট হয়েছে!')
             onSuccess?.()
         },

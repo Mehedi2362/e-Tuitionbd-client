@@ -38,6 +38,7 @@ export const studentRoutes: RouteObject[] = [
 export const tutorRoutes: RouteObject[] = [
     { index: true, element: <TutorMyApplications /> },
     { path: 'dashboard', element: <TutorMyApplications /> },
+    { path: 'my-applications', element: <TutorMyApplications /> },
     { path: 'applications', element: <TutorMyApplications /> },
     { path: 'ongoing-tuitions', element: <TutorOngoingTuitions /> },
     { path: 'revenue', element: <TutorRevenue /> },
