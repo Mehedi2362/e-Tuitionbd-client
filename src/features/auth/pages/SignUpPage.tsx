@@ -1,3 +1,10 @@
+/**
+ * SignUpPage Component
+ * Handles user registration with email and Google OAuth
+ * Supports both Student and Tutor role selection
+ * Uses Zod validation and React Hook Form for form management
+ */
+
 import { FieldLabel as Label, FieldSet as Set, FieldError as Error } from '@/components/ui/field'
 import { InputGroupAddon as Addon, InputGroupInput as Input, InputGroup } from '@/components/ui/input-group'
 import { Select, SelectTrigger as Trigger, SelectValue as Value, SelectContent as Content, SelectItem as Item, SelectGroup } from '@/components/ui/select'
@@ -19,6 +26,7 @@ import authService from '../service'
 import { toast } from 'sonner'
 
 // ==================== Field Configurations ====================
+// Define form field configurations for sign-up form including validation rules and UI properties
 const name = {
     type: 'text',
     name: 'name',
@@ -95,8 +103,8 @@ const RegisterPage = () => {
     })
     const { signUp, loading: authLoading } = useAuth({
         signUpFn: async (type, creds) => {
-            if (type === 'email') return await authService.signUpWithEmail(creds as SignUpCreds) || null
-            if (type === 'google') return await authService.signInWithGoogle() || null
+            if (type === 'email') return (await authService.signUpWithEmail(creds as SignUpCreds)) || null
+            if (type === 'google') return (await authService.signInWithGoogle()) || null
             return null
         },
         onSuccess() {

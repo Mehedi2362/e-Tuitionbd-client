@@ -1,3 +1,10 @@
+/**
+ * SignInPage Component
+ * Handles user login with email and password or Google OAuth
+ * Provides error handling and loading states
+ * Uses Zod validation and React Hook Form for form management
+ */
+
 import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -14,15 +21,21 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { SIGNUP } from '@/features/auth/constants'
-import {SignInSchema, type SignInCreds} from '@/shared/auth'
+import { SignInSchema, type SignInCreds } from '@/shared/auth'
 import authService from '@/features/auth/service'
-// ==================== Component ====================
+
+// ==================== Sign In Page Component ====================
+// Authentication form component with email/password and OAuth support
 
 const LoginPage = () => {
-    const { signIn, loading: authLoading, error: authError } = useAuth({
+    const {
+        signIn,
+        loading: authLoading,
+        error: authError,
+    } = useAuth({
         signInFn: async (type, creds) => {
-            if (type === 'email') return await authService.signInWithEmail(creds as { email: string; password: string }) || null
-            if (type === 'google') return await authService.signInWithGoogle() || null
+            if (type === 'email') return (await authService.signInWithEmail(creds as { email: string; password: string })) || null
+            if (type === 'google') return (await authService.signInWithGoogle()) || null
             return null
         },
         onSuccess: () => toast.success('Successfully signed in!'),
@@ -72,8 +85,9 @@ const LoginPage = () => {
                         type="button"
                         variant="outline"
                         className="w-full gap-2"
-                        onClick={() => signIn?.('google')} disabled={authLoading}
-                    // TODO: onClick={handleGoogleLogin}
+                        onClick={() => signIn?.('google')}
+                        disabled={authLoading}
+                        // TODO: onClick={handleGoogleLogin}
                     >
                         {isGoogleLoading ? <Loader2 className="size-5 animate-spin" /> : <GoogleIcon />}
                         <span>Google দিয়ে লগইন</span>
@@ -102,7 +116,7 @@ const LoginPage = () => {
                                         placeholder="আপনার ইমেইল লিখুন"
                                         autoComplete="email"
                                         disabled={isLoading}
-                                    // TODO: {...register('email')}
+                                        // TODO: {...register('email')}
                                     />
                                 </InputGroup>
                                 <Error>{errors.email?.message}</Error>
