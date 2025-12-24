@@ -1,229 +1,416 @@
-# eTuitionBd - Client
+# eTuitionBD - Client
 
-> বাংলাদেশের সেরা অনলাইন টিউশন ম্যানেজমেন্ট প্ল্যাটফর্ম
+A modern, fully-featured online tutoring platform frontend built with **React 19**, **TypeScript**, **Vite**, and **Tailwind CSS**. This platform connects students with qualified tutors for personalized learning experiences.
 
-## 🚀 Features
+![Node](https://img.shields.io/badge/Node-%3E%3D20-green) ![React](https://img.shields.io/badge/React-19-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Vite](https://img.shields.io/badge/Vite-6-purple) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-cyan) ![License](https://img.shields.io/badge/License-MIT-green)
 
-### 🏠 Public Features
+## 🌐 Live Demo
 
-- **Home Page** with hero section, search, and animations
-- **Tuition Listing** with search, filter, sort, and pagination
-- **Tutor Listing** with profiles and reviews
-- **Authentication** (Email/Password and Google OAuth)
+- **Production**: [https://e-tuitionbd.netlify.app](https://e-tuitionbd.netlify.app)
+- **Repository**: [GitHub](https://github.com/Mehedi2362/e-Tuitionbd-client)
 
-### 👨‍🎓 Student Dashboard
+## ✨ Features
 
-- **My Tuitions** - View, edit, and delete tuition posts
-- **Post Tuition** - Create new tuition requests
-- **Applied Tutors** - View and manage tutor applications
-- **Payments** - View transaction history
-- **Profile Settings** - Update personal information
+### Core Features
 
-### 👨‍🏫 Tutor Dashboard
+- 👨‍🎓 **Student Dashboard** - Track courses, progress, and reviews
+- 👨‍🏫 **Tutor Management** - Browse, search, and filter qualified tutors
+- 📚 **Course Browsing** - Extensive tuition catalog with advanced filtering
+- 🔍 **Smart Search** - Filter by class, subject, location, and more
+- 💰 **Payment Integration** - Secure payments via Stripe
+- 🔐 **Authentication** - Firebase-based auth with email verification
+- 📝 **Reviews & Ratings** - Student feedback system for tutors
+- 🌙 **Dark Mode** - Seamless light/dark theme switching
+- 📱 **Responsive Design** - Mobile-first, fully responsive UI
+- 🔔 **Real-time Updates** - React Query for efficient data fetching
 
-- **My Applications** - Track application status
-- **Ongoing Tuitions** - View approved tuitions
-- **Revenue** - View earnings and transactions
-- **Profile Settings** - Update tutor profile
+### Admin & Tutor Features
 
-### 👑 Admin Dashboard
-
-- **User Management** - Manage all users and roles
-- **Tuition Management** - Approve/reject tuition posts
-- **Reports & Analytics** - View platform statistics
-
-### 💳 Payment Integration
-
-- **Stripe Checkout** for secure payments
-- **Payment Confirmation** pages
-- **Transaction History**
+- 📊 **Admin Dashboard** - Manage users, tutors, and payments
+- 👨‍💼 **Tutor Profile** - Customize offerings and manage availability
+- 💳 **Payment History** - Track earnings and transactions
+- 📈 **Analytics** - View booking trends and student engagement
 
 ## 🛠️ Tech Stack
 
-- **React 18** with TypeScript
-- **Vite** for fast development
-- **React Router v7** for routing
-- **TanStack Query** for data fetching
-- **React Hook Form** + **Zod** for form validation
-- **shadcn/ui** + **Tailwind CSS** for UI
-- **Framer Motion** for animations
-- **Firebase Auth** for authentication
-- **Axios** for API calls
+### Frontend Framework
 
-## 📦 Installation
+- **React 19** - Latest React features with server components
+- **TypeScript** - Type-safe development
+- **Vite** - Lightning-fast build tool
+- **React Router v7** - Modern routing
 
-### Prerequisites
+### UI & Styling
 
-- Node.js 18+ and pnpm installed
-- Firebase project credentials
-- Running backend server
+- **Tailwind CSS 4** - Utility-first CSS framework
+- **shadcn/ui** - High-quality React components
+- **Radix UI** - Unstyled, accessible component primitives
+- **Lucide React** - Beautiful SVG icons
+- **Framer Motion** - Smooth animations and transitions
 
-### Setup Steps
+### State & Data Management
 
-1. **Install dependencies:**
+- **React Hook Form** - Efficient form handling
+- **TanStack React Query** - Server state management
+- **Axios** - HTTP client with interceptors
+- **Zod** - TypeScript-first validation
 
-   ```bash
-   pnpm install
-   ```
+### Backend Integration
 
-2. **Setup environment variables:**
+- **Firebase** - Authentication and real-time database
+- **Stripe** - Payment processing
+- **RESTful API** - Backend integration via axios
 
-   ```bash
-   cp .env.example .env.local
-   ```
+### Developer Tools
 
-   Edit `.env.local` with your credentials:
+- **ESLint** - Code quality and style
+- **Prettier** - Code formatting
+- **TypeScript Compiler** - Type checking
 
-   ```env
-   VITE_API_BASE_URL=http://localhost:5000/api/v1
-   VITE_FIREBASE_API_KEY=your_api_key
-   VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
-   VITE_FIREBASE_PROJECT_ID=your_project_id
-   VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
-   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-   VITE_FIREBASE_APP_ID=your_app_id
-   ```
+## 📋 Prerequisites
 
-3. **Run development server:**
-   ```bash
-   pnpm dev
-   ```
-   Opens at [http://localhost:3000](http://localhost:3000)
+Before getting started, ensure you have:
+
+- **Node.js** >= 20
+- **pnpm** >= 9 (recommended) or npm/yarn
+- **Git** for version control
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Mehedi2362/e-Tuitionbd-client.git
+cd e-Tuitionbd-client
+```
+
+### 2. Install Dependencies
+
+```bash
+pnpm install
+# or
+npm install
+```
+
+### 3. Environment Configuration
+
+Create `.env.local` in the root directory:
+
+```env
+# API Configuration
+VITE_API_BASE_URL=http://localhost:5000
+
+# Firebase Configuration
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+# Stripe Configuration
+VITE_STRIPE_PUBLIC_KEY=pk_test_your_key
+```
+
+For production environment, use `.env.production`.
+
+### 4. Start Development Server
+
+```bash
+pnpm dev
+```
+
+The application will be available at `http://localhost:5173`
+
+## 📦 Project Structure
+
+```
+src/
+├── assets/              # Static assets (icons, images)
+│   └── icons/
+├── components/          # Reusable React components
+│   ├── layout/         # Layout components
+│   ├── ui/             # UI component library
+│   ├── GlobalSearch.tsx
+│   └── guards.tsx      # Route guards
+├── config/             # Configuration files
+│   ├── api.ts          # API base URL config
+│   ├── axios.tsx       # Axios instance setup
+│   ├── auth.ts         # Auth config
+│   └── firebase.ts     # Firebase config
+├── constants/          # Application constants
+│   ├── api.ts
+│   ├── routes.ts
+│   └── index.ts
+├── contexts/           # React contexts
+├── features/           # Feature modules
+│   ├── about/
+│   ├── auth/           # Authentication feature
+│   ├── dashboard/      # Dashboard features
+│   ├── home/           # Home page
+│   ├── payments/       # Payment handling
+│   ├── tuitions/       # Tuition listings
+│   └── tutors/         # Tutor management
+├── hooks/              # Custom React hooks
+│   ├── useDebounce.ts
+│   ├── useLocalStorage.tsx
+│   ├── useTheme.tsx
+│   └── use-mobile.ts
+├── lib/                # Utility libraries
+│   └── utils.ts
+├── pages/              # Page components
+├── routes/             # Route configuration
+├── services/           # API services
+│   ├── dashboard.service.ts
+│   ├── user.service.ts
+│   ├── reviewApi.ts
+│   └── index.ts
+├── shared/             # Shared features
+│   ├── application/
+│   ├── auth/
+│   ├── dashboard/
+│   ├── payments/
+│   ├── public/
+│   ├── reviews/
+│   └── tuition/
+├── types/              # TypeScript type definitions
+├── utils/              # Utility functions
+├── App.tsx             # Root component
+├── main.tsx            # Entry point
+└── index.css           # Global styles
+```
 
 ## 🔧 Available Scripts
 
 ```bash
-pnpm dev          # Start development server (port 3000)
-pnpm build        # Build for production
-pnpm preview      # Preview production build locally
-pnpm test:run     # Run tests
-pnpm lint         # Run ESLint
-pnpm lint:fix     # Fix ESLint errors
-pnpm format       # Format code with Prettier
-pnpm type-check   # Check TypeScript types
-```
+# Development
+pnpm dev              # Start development server
 
-## 📁 Project Structure
+# Build & Deploy
+pnpm build            # Build for production
+pnpm preview          # Preview production build
+pnpm deploy           # Deploy to GitHub Pages
+pnpm deploy:github    # Deploy using gh-pages
 
-```
-client/
-├── src/
-│   ├── components/        # Reusable components
-│   │   ├── ui/           # shadcn/ui components
-│   │   ├── layout/       # Layout components (Header, Footer, Sidebar)
-│   │   └── guards.tsx    # Route protection
-│   ├── features/         # Feature-based modules
-│   │   ├── auth/         # Authentication
-│   │   ├── dashboard/    # Dashboard (Student, Tutor, Admin)
-│   │   ├── tuitions/     # Tuition management
-│   │   ├── tutors/       # Tutor profiles
-│   │   └── payments/     # Payment processing
-│   ├── pages/            # Page components
-│   ├── routes/           # Route configuration
-│   ├── services/         # API services
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Utility functions
-│   ├── types/            # TypeScript types
-│   └── config/           # Configuration files
-└── public/               # Static assets
+# Code Quality
+pnpm lint             # Run ESLint
+pnpm lint:fix         # Fix linting issues
+pnpm format           # Format code with Prettier
+pnpm format:check     # Check code formatting
+pnpm type-check       # Check TypeScript types
+
+# Maintenance
+pnpm clean            # Remove dist and .docs
+pnpm clean:all        # Remove dist, .docs, node_modules
 ```
 
 ## 🔐 Environment Variables
 
-Create a `.env` file in the `client` directory:
+### Development
 
-```env
-# API Configuration
-VITE_API_BASE_URL=http://localhost:5000/api/v1
+See `.env.development` for development-specific configuration.
 
-# Firebase Configuration
-VITE_FIREBASE_API_KEY=your_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_domain
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-```
+### Production
 
-## 🌐 API Integration
+See `.env.production` for production configuration.
 
-The client communicates with the backend API at `VITE_API_BASE_URL`.
+**Key Variables:**
 
-**Make sure the server is running before starting the client.**
+- `VITE_API_BASE_URL` - Backend API endpoint
+- `VITE_FIREBASE_*` - Firebase configuration
+- `VITE_STRIPE_PUBLIC_KEY` - Stripe publishable key
 
-API setup:
+## 🚢 Deployment
 
-- **Base URL:** `http://localhost:5000/api/v1` (development)
-- **Config:** `@/config/axios.tsx` - Axios instance with auth interceptors
-- **Services:** `@/services/*` - Feature-specific API calls
-- **Interceptors:** Automatic JWT token attachment and error handling
+### Netlify (Recommended)
 
-## 🎨 UI Components
+The project is configured for Netlify deployment with automatic builds on push to `main` branch.
 
-This project uses [shadcn/ui](https://ui.shadcn.com/) components with Tailwind CSS. All UI components are in `src/components/ui/`.
+**Setup:**
 
-To add new shadcn components:
+1. Connect GitHub repository to Netlify
+2. Set environment variables in Netlify dashboard
+3. Deploy automatically on push or manually via CLI:
 
 ```bash
-pnpm dlx shadcn@latest add button
+netlify deploy --prod
 ```
 
-## 🔒 Authentication
+### Vercel
 
-- **Firebase Authentication** for user management
-- **JWT tokens** stored in localStorage
-- **Route guards** for protected pages
-- **Role-based access control** (Student, Tutor, Admin)
+Alternative deployment via Vercel:
+
+```bash
+vercel --prod
+```
+
+## 🔗 API Integration
+
+The client communicates with the backend API at:
+
+- **Development**: `http://localhost:5000/api/v1`
+- **Production**: `https://e-tuitionbd-api.vercel.app/api/v1`
+
+### Key Endpoints
+
+- `GET //tutors` - Fetch tutors with filters
+- `GET //tuitions` - Fetch tuition listings
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `POST /payments/checkout` - Stripe payment checkout
+- `GET /dashboard/student` - Student dashboard
+- `GET /dashboard/tutor` - Tutor dashboard
+
+For full API documentation, see the [Server Repository](https://github.com/Mehedi2362/e-Tuitionbd-server).
+
+## 🔐 Authentication
+
+### Firebase Authentication
+
+- Email/Password authentication
+- Email verification
+- Password reset
+- Session management via cookies
+
+### Protected Routes
+
+Routes are protected using route guards in [components/guards.tsx](src/components/guards.tsx).
+
+## 💳 Payment Processing
+
+### Stripe Integration
+
+- Secure payment checkout
+- Payment history tracking
+- Invoice generation
+- Webhook handling for payment confirmation
+
+## 🎨 Theming
+
+The application supports light and dark themes using Tailwind CSS and next-themes.
+
+### Toggle Theme
+
+```tsx
+import { useTheme } from '@/hooks/useTheme'
+
+export function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme()
+  return <button onClick={toggleTheme}>Toggle Theme</button>
+}
+```
+
+## 🧪 Code Quality
+
+### ESLint
+
+```bash
+pnpm lint              # Check for issues
+pnpm lint:fix          # Automatically fix issues
+```
+
+### Prettier
+
+```bash
+pnpm format            # Format all files
+pnpm format:check      # Check formatting
+```
+
+### TypeScript
+
+```bash
+pnpm type-check        # Check types without building
+```
 
 ## 📱 Responsive Design
 
-- Mobile-first approach
-- Responsive navbar with mobile menu
-- Adaptive layouts for all screen sizes
-- Touch-friendly UI elements
+The application is fully responsive across all device sizes:
 
-### Netlify
+- Mobile (320px and up)
+- Tablet (768px and up)
+- Desktop (1024px and up)
+- Large screens (1280px and up)
 
-1. **Build:**
+Use the custom `use-mobile` hook to handle responsive behavior:
 
-   ```bash
-   pnpm build
-   ```
+```tsx
+import { useMobile } from '@/hooks/use-mobile'
 
-2. **Connect repository** to Netlify for auto-deployment
+export function Component() {
+  const isMobile = useMobile()
+  return isMobile ? <MobileView /> : <DesktopView />
+}
+```
 
-3. **Set environment variables** in Netlify dashboard:
-   - Copy all `VITE_*` variables from `.env.local`
-   - Update `VITE_API_BASE_URL` to production server URL
+## 🐛 Troubleshooting
 
-4. **Configure Firebase:** -� Related Repositories
+### CORS Issues
 
-- **Server:** [e-Tuitionbd-server](https://github.com/Mehedi2362/e-Tuitionbd-server)
-- **Client:** [e-Tuitionbd-client](https://github.com/Mehedi2362/e-Tuitionbd-client)
+If you encounter CORS errors, ensure:
 
-## 📝 License
+1. Backend API is running
+2. `VITE_API_BASE_URL` environment variable is correct
+3. Backend CORS is configured to allow the client domain
 
-MIT
+### Firebase Authentication Errors
 
-## 👥 Author
+- Verify Firebase configuration in `.env.local`
+- Check Firebase project console for enabled auth methods
+- Ensure email verification is configured
 
-B12-A11 Project Team
+### Build Errors
+
+```bash
+# Clear cache and reinstall
+pnpm clean:all
+pnpm install
+pnpm build
+```
+
+## 📚 Additional Resources
+
+- [React Documentation](https://react.dev)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs)
+- [Vite Documentation](https://vitejs.dev)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
+- [shadcn/ui Components](https://ui.shadcn.com)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [Stripe Documentation](https://stripe.com/docs)
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### Code Style
+
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write meaningful commit messages
+- Add TypeScript types for all code
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Team & Support
+
+**Maintainer:** [Mehedi2362](https://github.com/Mehedi2362)
+
+For issues, feature requests, or discussions, please use the [GitHub Issues](https://github.com/Mehedi2362/e-Tuitionbd-client/issues) page.
+
+## 🙏 Acknowledgments
+
+- [React Community](https://react.dev)
+- [Tailwind Labs](https://tailwindlabs.com)
+- [shadcn](https://github.com/shadcn) for the amazing component library
+- Firebase and Stripe teams
 
 ---
 
-For issues or questions, please open an issue on GitHub.
-
-1. Build: `pnpm build`
-2. Deploy `dist/` folder to your hosting
-3. Configure redirects for SPA routing
-4. Update environment variables on hosting platform
-
-5. **Configure Firebase authorized domains** in Firebase Console
-
-## 📝 License
-
-MIT
-
-## 👥 Team
-
-B12-A11 Project Team
+**Made with ❤️ for the education community**
