@@ -1,0 +1,6 @@
+{
+  "name": "Comments Tree Generator",
+  "description": "Scans TSX/JSX files and generates a Markdown file with folder-based comments tree",
+  "icon": "📝",
+  "category": "Documentation"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Bundle Analyzer",
+  "description": "Analyzes bundle size and generates a detailed report",
+  "icon": "📊",
+  "category": "Build"
+}

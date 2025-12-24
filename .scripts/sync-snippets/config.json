@@ -1,0 +1,6 @@
+{
+  "name": "Sync Snippets",
+  "description": "Merges all snippets from .snippets/ folder into VS Code snippets file",
+  "icon": "🔄",
+  "category": "Development"
+}
