@@ -188,9 +188,9 @@ const TuitionApplicationsSection = ({ tuition }: { tuition: Tuition }) => {
             <AccordionTrigger className="px-4 hover:no-underline">
                 <div className="flex items-center gap-4 text-left">
                     <div>
-                        <p className="font-semibold">{tuition.title}</p>
+                        <p className="font-semibold">{tuition.subject}</p>
                         <p className="text-sm text-muted-foreground">
-                            {tuition.subject} • {tuition.class} • বাজেট: ৳{tuition.budget.toLocaleString()}
+                            {tuition.class} • বাজেট: ৳{tuition.budget.toLocaleString()}
                         </p>
                     </div>
                     <Badge variant="outline" className="ml-auto mr-4">

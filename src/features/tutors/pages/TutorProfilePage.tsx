@@ -3,23 +3,18 @@
 // #TODO: Qualifications and experience
 // #TODO: Rating & reviews (Optional)
 
-import { AboutTab, ExperienceTab, ProfileSidebar, ReviewsTab, AddReviewForm } from '@/features/tutors'
+import { AboutTab, ExperienceTab, ProfileSidebar } from '@/features/tutors'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useParams } from 'react-router'
-import { useAuth } from '@/features/auth'
-import { useTutor, useTutorReviews } from '@/features/tutors/queries'
+import { useTutor } from '@/features/tutors/queries'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const TutorProfilePage = () => {
     // Get tutor ID from URL params
     const { id: tutorId } = useParams<{ id: string }>()
-    const { isAuthenticated } = useAuth()
 
     // Fetch tutor data
     const { data: tutor, isLoading: tutorLoading, error: tutorError } = useTutor(tutorId || '')
-
-    // Fetch reviews data
-    const { data: reviewsData, isLoading: reviewsLoading } = useTutorReviews(tutorId || '', 0, 10)
 
     const handleSendMessage = () => {
         // #TODO: Open messaging dialog or redirect to chat
@@ -53,8 +48,6 @@ const TutorProfilePage = () => {
         )
     }
 
-    const reviews = reviewsData?.reviews || []
-
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -69,7 +62,9 @@ const TutorProfilePage = () => {
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="about">About</TabsTrigger>
                             <TabsTrigger value="experience">Experience</TabsTrigger>
-                            <TabsTrigger value="reviews">Reviews</TabsTrigger>
+                            <TabsTrigger value="reviews" disabled>
+                                Reviews
+                            </TabsTrigger>
                         </TabsList>
 
                         {/* About Tab */}
@@ -82,10 +77,14 @@ const TutorProfilePage = () => {
                             <ExperienceTab tutor={tutor} />
                         </TabsContent>
 
-                        {/* Reviews Tab */}
+                        {/* Reviews Tab - Coming Soon */}
                         <TabsContent value="reviews" className="space-y-6">
-                            <AddReviewForm tutorId={tutorId || ''} isAuthenticated={isAuthenticated} />
-                            <ReviewsTab reviews={reviews} isLoading={reviewsLoading} />
+                            <div className="flex items-center justify-center py-12">
+                                <div className="text-center">
+                                    <h3 className="text-lg font-semibold mb-2">Coming Soon</h3>
+                                    <p className="text-muted-foreground">Tutor reviews feature will be available soon.</p>
+                                </div>
+                            </div>
                         </TabsContent>
                     </Tabs>
                 </div>

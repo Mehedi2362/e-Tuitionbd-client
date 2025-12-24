@@ -89,7 +89,7 @@ const PaymentRow = ({ payment }: { payment: Payment }) => (
         <TableCell className="font-mono text-xs">{payment.stripePaymentId || payment._id.slice(-8)}</TableCell>
         <TableCell>
             <div>
-                <p className="font-medium">{payment.tuition?.title || 'Unknown'}</p>
+                <p className="font-medium">{payment.tuition?.subject || 'Unknown'}</p>
                 <p className="text-xs text-muted-foreground">{payment.tuition?.subject}</p>
             </div>
         </TableCell>

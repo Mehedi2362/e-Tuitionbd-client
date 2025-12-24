@@ -7,7 +7,6 @@ export { default as TuitionsGrid } from './TuitionsGrid'
 
 // Tuition Details Components
 export { default as ApplyModal } from './ApplyModal'
-export { default as SimilarTuitionsCard } from './SimilarTuitionsCard'
 export { default as StudentInfoCard } from './StudentInfoCard'
 export { default as TuitionInfoSection } from './TuitionInfoSection'
 

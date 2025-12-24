@@ -14,6 +14,7 @@ const USER_ROUTES = {
 const TUTOR_ROUTES = {
     ALL: '/tutors',
     FEATURED: '/tutors/featured',
+    FILTER_OPTIONS: '/tutors/filter-options',
     BY_ID: (id: string) => `/tutors/${id}`,
 }
 
@@ -71,6 +72,11 @@ export const TutorService = {
     getFeatured: (limit: number = 6): Promise<TutorProfile[]> =>
         publicAxios.get<ApiResponse<TutorProfile[]>>(TUTOR_ROUTES.FEATURED, { params: { limit } })
             .then(res => res.data.data || []),
+
+    // Get filter options (public)
+    getFilterOptions: (): Promise<{ subjects: string[]; locations: string[]; experience: string[] }> =>
+        publicAxios.get<ApiResponse<{ subjects: string[]; locations: string[]; experience: string[] }>>(TUTOR_ROUTES.FILTER_OPTIONS)
+            .then(res => res.data.data!),
 
     // Get tutor by ID (public)
     getById: (id: string): Promise<TutorProfile> =>

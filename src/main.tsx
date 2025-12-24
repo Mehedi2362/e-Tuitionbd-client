@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { App } from './App.tsx'
@@ -20,8 +19,4 @@ if (l.search[1] === '/') {
     window.history.replaceState(null, '', l.pathname.slice(0, -10) + decoded.p + (decoded.q ? '?' + decoded.q : ''))
 }
 
-createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <App />
-    </StrictMode>
-)
+createRoot(document.getElementById('root')!).render(<App />)

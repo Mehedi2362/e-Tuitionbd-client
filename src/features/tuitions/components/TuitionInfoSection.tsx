@@ -2,19 +2,19 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { BookOpen, Calendar, Clock, DollarSign, GraduationCap, MapPin } from 'lucide-react'
-import type { TuitionDetails } from './types'
+import type { Tuition } from '@/types'
 
 interface TuitionInfoSectionProps {
-    tuition: TuitionDetails
+    tuition: Tuition
 }
 
 // Get badge variant based on status
-const getStatusBadge = (status: TuitionDetails['status']) => {
+const getStatusBadge = (status: Tuition['status']) => {
     const variants = {
         pending: { variant: 'outline' as const, label: 'Pending', className: 'border-yellow-500 text-yellow-600' },
         approved: { variant: 'secondary' as const, label: 'Approved', className: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200' },
         rejected: { variant: 'destructive' as const, label: 'Rejected', className: '' },
-        hired: { variant: 'default' as const, label: 'Hired', className: 'bg-blue-600' },
+        completed: { variant: 'default' as const, label: 'Completed', className: 'bg-blue-600' },
     }
     return variants[status]
 }
@@ -40,10 +40,10 @@ const TuitionInfoSection = ({ tuition }: TuitionInfoSectionProps) => {
             <CardHeader>
                 <div className="flex justify-between items-start">
                     <div>
-                        <CardTitle className="text-2xl mb-2">{tuition.title}</CardTitle>
+                        <CardTitle className="text-2xl mb-2">{tuition.subject}</CardTitle>
                         <CardDescription className="flex items-center gap-2">
                             <Clock className="h-4 w-4" />
-                            Posted {formatDate(tuition.postedAt)}
+                            Posted {formatDate(tuition.createdAt)}
                         </CardDescription>
                     </div>
                     <Badge variant={statusBadge.variant} className={statusBadge.className}>
@@ -66,7 +66,7 @@ const TuitionInfoSection = ({ tuition }: TuitionInfoSectionProps) => {
                         <GraduationCap className="h-5 w-5 text-primary shrink-0" />
                         <div>
                             <p className="text-sm text-muted-foreground">Class</p>
-                            <p className="font-medium">{tuition.classLevel}</p>
+                            <p className="font-medium">{tuition.class}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -99,22 +99,23 @@ const TuitionInfoSection = ({ tuition }: TuitionInfoSectionProps) => {
                 <Separator />
 
                 {/* Description */}
-                <div>
-                    <h3 className="font-semibold mb-2">Description</h3>
-                    <p className="text-muted-foreground leading-relaxed">{tuition.description}</p>
-                </div>
-
-                <Separator />
+                {tuition.description && (
+                    <>
+                        <div>
+                            <h3 className="font-semibold mb-2">Description</h3>
+                            <p className="text-muted-foreground leading-relaxed">{tuition.description}</p>
+                        </div>
+                        <Separator />
+                    </>
+                )}
 
                 {/* Requirements */}
-                <div>
-                    <h3 className="font-semibold mb-2">Requirements</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-1">
-                        {tuition.requirements.map((req, index) => (
-                            <li key={index}>{req}</li>
-                        ))}
-                    </ul>
-                </div>
+                {tuition.requirements && (
+                    <div>
+                        <h3 className="font-semibold mb-2">Requirements</h3>
+                        <p className="text-muted-foreground">{tuition.requirements}</p>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

@@ -73,7 +73,7 @@ const TuitionRow = ({ tuition, onDelete, isDeleting }: { tuition: Tuition; onDel
 
     return (
         <TableRow>
-            <TableCell className="font-medium max-w-[200px] truncate">{tuition.title}</TableCell>
+            <TableCell className="font-medium max-w-[200px] truncate">{tuition.subject}</TableCell>
             <TableCell>{tuition.subject}</TableCell>
             <TableCell>{tuition.class}</TableCell>
             <TableCell>{tuition.location}</TableCell>

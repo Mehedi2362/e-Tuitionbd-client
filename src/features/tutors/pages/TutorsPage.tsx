@@ -7,33 +7,38 @@ import { TutorSearchFilters, TutorsGrid } from '@/features/tutors'
 import type { TutorFilters } from '@/features/tutors/components/TutorSearchFilters'
 import { useTutors } from '@/features/tutors/queries'
 import { useState } from 'react'
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
+
+const initialFilters: TutorFilters & { page: number } = {
+    page: 1,
+    search: '',
+    subject: 'all',
+    location: 'all',
+    experience: 'all',
+}
 
 const TutorsPage = () => {
     // Filter state
-    const [filters, setFilters] = useState<TutorFilters>({
-        search: '',
-        subject: 'all',
-        location: 'all',
-        experience: 'all',
-    })
+    const [filters, setFilters] = useState<TutorFilters & { page: number }>(initialFilters)
 
     // Fetch tutors from server
-    const { data: response, isLoading, error } = useTutors(filters as any)
+    const { data, isLoading } = useTutors(filters as any)
+    const tutors = data?.data
+    const paginationMeta = data?.pagination
 
-    // Extract tutors array from paginated response
-    const tutors = response?.data || []
-
-    // Show error state
-    if (error) {
-        return (
-            <div className="container mx-auto px-4 py-8">
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold text-red-600">Failed to load tutors</h2>
-                    <p className="text-muted-foreground mt-2">Please try again later</p>
-                </div>
-            </div>
-        )
+    const handleFiltersChange = (newFilters: Partial<TutorFilters>) => {
+        setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }))
     }
+
+    const handleSearch = () => {
+        setFilters((prev) => ({ ...prev, page: 1 }))
+    }
+
+    const handleClear = () => {
+        setFilters(initialFilters)
+    }
+
+    const totalPages = paginationMeta?.totalPages || 1
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -45,11 +50,32 @@ const TutorsPage = () => {
 
             {/* Search and Filter Section */}
             <div className="mb-8">
-                <TutorSearchFilters filters={filters} onFiltersChange={setFilters} onSearch={() => {}} />
+                <TutorSearchFilters filters={filters} onFiltersChange={handleFiltersChange} onSearch={handleSearch} onClear={handleClear} />
             </div>
 
             {/* Tutors Grid */}
-            <TutorsGrid tutors={tutors} isLoading={isLoading} />
+            <div className="mb-8">
+                <TutorsGrid tutors={tutors} isLoading={isLoading} />
+            </div>
+
+            {/* Pagination */}
+            <Pagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious href="#" onClick={() => setFilters((prev) => ({ ...prev, page: Math.max((prev.page ?? 1) - 1, 1) }))} />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                        <PaginationItem key={i + 1}>
+                            <PaginationLink href="#" isActive={filters.page === i + 1} onClick={() => setFilters((prev) => ({ ...prev, page: i + 1 }))}>
+                                {i + 1}
+                            </PaginationLink>
+                        </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                        <PaginationNext href="#" onClick={() => setFilters((prev) => ({ ...prev, page: Math.min((prev.page ?? 1) + 1, totalPages) }))} />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
     )
 }

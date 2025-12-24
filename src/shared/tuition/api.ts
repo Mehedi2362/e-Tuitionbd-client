@@ -2,6 +2,7 @@ export const TUITION_ROUTES = {
     // Public routes
     ALL: "/tuitions",
     FEATURED: "/tuitions/featured",
+    FILTER_OPTIONS: "/tuitions/filter-options",
     BY_ID: (id: string) => `/tuitions/${id}`,
 
     // Student routes

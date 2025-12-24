@@ -3,123 +3,108 @@
  * Modular structure with components
  */
 
-import { SearchFilters, TuitionsGrid } from '@/features/tuitions'
+import { SearchFilters, TuitionsGrid, useTuitions } from '@/features/tuitions'
 import type { TuitionFilters } from '@/features/tuitions/components/SearchFilters'
-import type { Tuition } from '@/features/tuitions/components/TuitionCard'
+import type { Tuition } from '@/types'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { useState } from 'react'
 
 // Demo data for tuitions
-const demoTuitions: Tuition[] = [
-    {
-        _id: '1',
-        title: 'গণিত টিউটর দরকার - SSC পরীক্ষার প্রস্তুতি',
-        class: '১০',
-        subjects: ['গণিত', 'উচ্চতর গণিত'],
-        location: 'ধানমন্ডি, ঢাকা',
-        salary: { min: 5000, max: 8000 },
-        daysPerWeek: 4,
-        preferredTime: 'বিকাল',
-        status: 'approved',
-        createdAt: '2024-01-15',
-    },
-    {
-        _id: '2',
-        title: 'ইংরেজি টিউটর - কথা বলা ও লেখার দক্ষতা বাড়াতে',
-        class: '৮',
-        subjects: ['ইংরেজি'],
-        location: 'মিরপুর, ঢাকা',
-        salary: { min: 4000, max: 6000 },
-        daysPerWeek: 3,
-        preferredTime: 'সন্ধ্যা',
-        status: 'approved',
-        createdAt: '2024-01-14',
-    },
-    {
-        _id: '3',
-        title: 'পদার্থবিজ্ঞান ও রসায়ন - HSC',
-        class: '১২',
-        subjects: ['পদার্থবিজ্ঞান', 'রসায়ন'],
-        location: 'গুলশান, ঢাকা',
-        salary: { min: 8000, max: 12000 },
-        daysPerWeek: 5,
-        preferredTime: 'সকাল',
-        status: 'approved',
-        createdAt: '2024-01-13',
-    },
-    {
-        _id: '4',
-        title: 'প্রাথমিক স্তরের সব বিষয়',
-        class: '৫',
-        subjects: ['বাংলা', 'ইংরেজি', 'গণিত', 'বিজ্ঞান'],
-        location: 'উত্তরা, ঢাকা',
-        salary: { min: 3000, max: 5000 },
-        daysPerWeek: 6,
-        preferredTime: 'বিকাল',
-        status: 'approved',
-        createdAt: '2024-01-12',
-    },
-    {
-        _id: '5',
-        title: 'জীববিজ্ঞান টিউটর - মেডিকেল এডমিশন প্রস্তুতি',
-        class: '১২',
-        subjects: ['জীববিজ্ঞান'],
-        location: 'মোহাম্মদপুর, ঢাকা',
-        salary: { min: 6000, max: 10000 },
-        daysPerWeek: 4,
-        preferredTime: 'রাত',
-        status: 'approved',
-        createdAt: '2024-01-11',
-    },
-    {
-        _id: '6',
-        title: 'আইসিটি টিউটর - প্রোগ্রামিং বেসিক',
-        class: '৯',
-        subjects: ['তথ্য ও যোগাযোগ প্রযুক্তি'],
-        location: 'অনলাইন',
-        salary: { min: 4000, max: 7000 },
-        daysPerWeek: 3,
-        preferredTime: 'সন্ধ্যা',
-        status: 'approved',
-        createdAt: '2024-01-10',
-    },
-]
+
+// const tuitions: Tuition[] = [
+//     {
+//         _id: '1',
+//         subject: 'গণিত, উচ্চতর গণিত',
+//         class: '১০',
+//         location: 'ধানমন্ডি, ঢাকা',
+//         budget: 8000,
+//         schedule: 'সপ্তাহে ৪ দিন, বিকাল',
+//         status: 'approved',
+//         createdAt: '2024-01-15',
+//     },
+//     {
+//         _id: '2',
+//         subject: 'ইংরেজি',
+//         class: '৮',
+//         location: 'মিরপুর, ঢাকা',
+//         budget: 6000,
+//         schedule: 'সপ্তাহে ৩ দিন, সন্ধ্যা',
+//         status: 'approved',
+//         createdAt: '2024-01-14',
+//     },
+//     {
+//         _id: '3',
+//         subject: 'পদার্থবিজ্ঞান, রসায়ন',
+//         class: '১২',
+//         location: 'গুলশান, ঢাকা',
+//         budget: 12000,
+//         schedule: 'সপ্তাহে ৫ দিন, সকাল',
+//         status: 'approved',
+//         createdAt: '2024-01-13',
+//     },
+//     {
+//         _id: '4',
+//         subject: 'বাংলা, ইংরেজি, গণিত, বিজ্ঞান',
+//         class: '৫',
+//         location: 'উত্তরা, ঢাকা',
+//         budget: 5000,
+//         schedule: 'সপ্তাহে ৬ দিন, বিকাল',
+//         status: 'approved',
+//         createdAt: '2024-01-12',
+//     },
+//     {
+//         _id: '5',
+//         subject: 'জীববিজ্ঞান',
+//         class: '১২',
+//         location: 'মোহাম্মদপুর, ঢাকা',
+//         budget: 10000,
+//         schedule: 'সপ্তাহে ৪ দিন, রাত',
+//         status: 'approved',
+//         createdAt: '2024-01-11',
+//     },
+//     {
+//         _id: '6',
+//         subject: 'তথ্য ও যোগাযোগ প্রযুক্তি',
+//         class: '৯',
+//         location: 'অনলাইন',
+//         budget: 7000,
+//         schedule: 'সপ্তাহে ৩ দিন, সন্ধ্যা',
+//         status: 'approved',
+//         createdAt: '2024-01-10',
+//     },
+// ]
 
 const initialFilters: TuitionFilters = {
+    page: 1,
     search: '',
-    classFilter: 'all',
-    subjectFilter: 'all',
-    locationFilter: 'all',
-    sortBy: 'date',
-    sortOrder: 'desc',
+    class: 'all',
+    subject: 'all',
+    location: 'all',
+    sort: 'date',
+    order: 'desc',
 }
 
 const TuitionsPage = () => {
     const [filters, setFilters] = useState<TuitionFilters>(initialFilters)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [isLoading] = useState(false)
 
-    // TODO: Replace with useQuery
-    // const { data: tuitions, isLoading, error } = useQuery({
-    //   queryKey: ['tuitions', filters, currentPage],
-    //   queryFn: () => fetchTuitions({ ...filters, page: currentPage }),
-    // });
+    // Fetch tuitions from API
+    const { data, isLoading, error } = useTuitions(filters)
+    const tuitions = data?.data
+    const paginationMeta = data?.pagination
 
     const handleFiltersChange = (newFilters: Partial<TuitionFilters>) => {
         setFilters((prev) => ({ ...prev, ...newFilters }))
     }
 
     const handleSearch = () => {
-        setCurrentPage(1)
-        // TODO: Trigger query refetch
+        setFilters((prev) => ({ ...prev, page: 1 }))
     }
 
     const handleClear = () => {
         setFilters(initialFilters)
-        setCurrentPage(1)
     }
 
-    const totalPages = 5 // TODO: Get from API response
+    const totalPages = paginationMeta?.totalPages || 1
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -136,24 +121,24 @@ const TuitionsPage = () => {
 
             {/* Tuitions Grid */}
             <div className="mb-8">
-                <TuitionsGrid tuitions={demoTuitions} isLoading={isLoading} />
+                <TuitionsGrid tuitions={tuitions as Tuition[]} isLoading={isLoading} error={error} />
             </div>
 
             {/* Pagination */}
             <Pagination>
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious href="#" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} />
+                        <PaginationPrevious href="#" onClick={() => setFilters((prev) => ({ ...prev, page: Math.max((prev.page ?? 1) - 1, 1) }))} />
                     </PaginationItem>
                     {Array.from({ length: totalPages }).map((_, i) => (
                         <PaginationItem key={i + 1}>
-                            <PaginationLink href="#" isActive={currentPage === i + 1} onClick={() => setCurrentPage(i + 1)}>
+                            <PaginationLink href="#" isActive={filters.page === i + 1} onClick={() => setFilters((prev) => ({ ...prev, page: i + 1 }))}>
                                 {i + 1}
                             </PaginationLink>
                         </PaginationItem>
                     ))}
                     <PaginationItem>
-                        <PaginationNext href="#" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} />
+                        <PaginationNext href="#" onClick={() => setFilters((prev) => ({ ...prev, page: Math.min((prev.page ?? 1) + 1, totalPages) }))} />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>

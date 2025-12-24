@@ -26,17 +26,17 @@ export interface UpdateProfileInput {
 export class UserService {
     static async getProfile() {
         const response = await privateAxios.get('/profile/me');
-        return response.data;
+        return response.data.data;
     }
 
     static async updateProfile(data: UpdateProfileInput) {
         const response = await privateAxios.patch('/profile/update', data);
-        return response.data;
+        return response.data.data;
     }
 
     static async getUsers(params: UserQueryParams = {}) {
         const response = await publicAxios.get('/users', { params });
-        return response.data;
+        return response.data.data;
     }
 
     static async getAll(params: UserQueryParams = {}) {
@@ -45,12 +45,12 @@ export class UserService {
 
     static async getById(id: string) {
         const response = await publicAxios.get(`/users/${id}`);
-        return response.data;
+        return response.data.data;
     }
 
     static async updateRole(id: string, role: string) {
         const response = await privateAxios.patch(`/users/${id}/role`, { role });
-        return response.data;
+        return response.data.data;
     }
 }
 
@@ -66,7 +66,7 @@ export class TutorService {
 
     static async getTutorById(id: string) {
         const response = await publicAxios.get(`/tutors/${id}`);
-        return response.data;
+        return response.data.data;
     }
 
     static async getById(id: string) {
@@ -75,11 +75,11 @@ export class TutorService {
 
     static async getFeatured(limit?: number) {
         const response = await publicAxios.get('/tutors/featured', { params: { limit } });
-        return response.data;
+        return response.data.data;
     }
 
     static async searchTutors(params: TutorQueryParams) {
         const response = await publicAxios.get('/tutors/search', { params });
-        return response.data;
+        return response.data.data;
     }
 }

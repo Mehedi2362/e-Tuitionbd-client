@@ -22,6 +22,10 @@ export const TuitionService = {
         publicAxios.get<ApiResponse<Tuition[]>>(TUITION_ROUTES.FEATURED, { params: { limit } })
             .then(res => res.data.data || []),
 
+    getFilterOptions: (): Promise<{ classes: string[]; subjects: string[]; locations: string[] }> =>
+        publicAxios.get<ApiResponse<{ classes: string[]; subjects: string[]; locations: string[] }>>(TUITION_ROUTES.FILTER_OPTIONS)
+            .then(res => res.data.data!),
+
     getById: (id: string): Promise<Tuition> =>
         publicAxios.get<ApiResponse<Tuition>>(TUITION_ROUTES.BY_ID(id))
             .then(res => res.data.data!),

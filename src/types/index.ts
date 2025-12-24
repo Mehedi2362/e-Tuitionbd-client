@@ -45,13 +45,14 @@ export interface UpdateProfileInput {
 }
 
 // ==================== Tuition Types ====================
-// #TODO: Tuition status types for approval workflow
-export type TuitionStatus = 'pending' | 'approved' | 'rejected'
+// Tuition status types for approval workflow
+export type TuitionStatus = 'pending' | 'approved' | 'rejected' | 'completed'
 
-// #TODO: Tuition interface for MongoDB tuition document
+// Tuition interface for MongoDB tuition document (matches server ITuition)
 export interface Tuition {
     _id: string
-    title: string
+    studentName?: string
+    studentEmail?: string
     subject: string
     class: string
     location: string
@@ -60,15 +61,13 @@ export interface Tuition {
     description?: string
     requirements?: string
     status: TuitionStatus
-    studentId: string
-    student?: User
+    applicationsCount?: number
     createdAt: string
-    updatedAt: string
+    updatedAt?: string
 }
 
-// #TODO: Tuition creation input type
+// Tuition creation input type
 export interface CreateTuitionInput {
-    title?: string
     subject: string
     class: string
     location: string
@@ -78,16 +77,16 @@ export interface CreateTuitionInput {
     requirements?: string
 }
 
-// #TODO: Tuition update input type
+// Tuition update input type
 export interface UpdateTuitionInput extends Partial<CreateTuitionInput> {
     status?: TuitionStatus
 }
 
 // ==================== Application Types ====================
-// #TODO: Application status types for tutor applications
-export type ApplicationStatus = 'pending' | 'approved' | 'rejected'
+// Application status types for tutor applications
+export type ApplicationStatus = 'pending' | 'approved' | 'rejected' | 'completed'
 
-// #TODO: Application interface for tutor applications
+// Application interface for tutor applications
 export interface Application {
     _id: string
     tuitionId: string
@@ -197,12 +196,11 @@ export interface PaginationMeta {
     totalPages: number
 }
 
-// Paginated response type for listings
+// Paginated response type for listings (matches server)
 export interface PaginatedResponse<T> {
     success: boolean
-    message: string
     data: T[]
-    meta: PaginationMeta
+    pagination: PaginationMeta
 }
 
 // API error response

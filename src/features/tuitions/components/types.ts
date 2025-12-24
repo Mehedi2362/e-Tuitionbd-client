@@ -2,37 +2,34 @@
 
 export interface TuitionDetails {
     _id: string
-    title: string
-    description: string
+    studentId?: string
+    studentEmail?: string
+    studentName?: string
     subject: string
-    classLevel: string
+    class: string
     location: string
     budget: number
     schedule: string
-    requirements: string[]
-    status: 'pending' | 'approved' | 'rejected' | 'hired'
-    postedAt: string
-    student: {
-        _id: string
-        name: string
-        email: string
-        phone?: string
-        photo?: string
-    }
+    description?: string
+    requirements?: string
+    status: 'pending' | 'approved' | 'rejected' | 'completed'
+    applicationsCount?: number
+    createdAt: string
+    updatedAt?: string
 }
 
 export interface TutorApplication {
     _id: string
-    tutor: {
-        _id: string
-        name: string
-        email: string
-        photo?: string
-        education: string
-    }
+    tuitionId: string
+    tutorId: string
+    tutorEmail: string
+    tutorName: string
+    tutorPhotoUrl?: string
     qualifications: string
     experience: string
     expectedSalary: number
-    status: 'pending' | 'accepted' | 'rejected'
-    appliedAt: string
+    coverLetter?: string
+    status: 'pending' | 'approved' | 'rejected' | 'completed'
+    createdAt: string
+    updatedAt?: string
 }
