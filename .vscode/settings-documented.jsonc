@@ -1,0 +1,75 @@
+/**
+ * VS Code Settings Configuration
+ * Configures editor formatting, linting, and language-specific settings
+ */
+{
+  "// ==================== Editor Formatting ====================": "",
+  "editor.formatOnSave": true,
+  "// Auto-format code on save using configured formatter": "",
+  
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "// Default code formatter: Prettier": "",
+  
+  "editor.tabSize": 4,
+  "// Indentation size: 4 spaces": "",
+  
+  "editor.insertSpaces": true,
+  "// Use spaces instead of tabs": "",
+
+  "// ==================== Language-Specific Formatters ====================": "",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// JavaScript: Use Prettier": ""
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// TypeScript: Use Prettier": ""
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// TSX/React: Use Prettier": ""
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// JSX: Use Prettier": ""
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// JSON: Use Prettier": ""
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// JSON with Comments: Use Prettier": ""
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// CSS: Use Prettier": ""
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// HTML: Use Prettier": ""
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "// Markdown: Use Prettier": ""
+  },
+
+  "// ==================== Code Actions ====================": "",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "// Run ESLint auto-fix on save": "",
+    "source.organizeImports": "explicit",
+    "// Automatically organize imports on save": ""
+  },
+
+  "// ==================== TypeScript Configuration ====================": "",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "// Prefer non-relative imports (use path aliases)": "",
+  
+  "typescript.suggest.autoImports": true,
+  "// Enable auto-import suggestions": "",
+
+  "// ==================== File Configuration ====================": "",
+  "files.eol": "\n"
+  "// Use Unix line endings (LF) for all files": ""
+}

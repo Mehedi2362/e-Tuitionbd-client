@@ -1,0 +1,26 @@
+/**
+ * VS Code Extensions Recommendations
+ * These extensions are recommended for working with this project
+ * Developers will be prompted to install missing extensions
+ */
+{
+  "recommendations": [
+    // Code formatting - Prettier
+    "esbenp.prettier-vscode",
+    
+    // Linting - ESLint
+    "dbaeumer.vscode-eslint",
+    
+    // Styling - Tailwind CSS intellisense
+    "bradlc.vscode-tailwindcss",
+    
+    // HTML/JSX utilities - Auto rename paired tags
+    "formulahendry.auto-rename-tag",
+    
+    // Autocomplete - Path and filename intellisense
+    "christian-kohler.path-intellisense",
+    
+    // Environment - .env file support
+    "mikestead.dotenv"
+  ]
+}
