@@ -52,33 +52,51 @@
 
 ## 📦 Installation
 
+### Prerequisites
+
+- Node.js 18+ and pnpm installed
+- Firebase project credentials
+- Running backend server
+
+### Setup Steps
+
 1. **Install dependencies:**
 
    ```bash
-   cd client
    pnpm install
    ```
 
 2. **Setup environment variables:**
 
    ```bash
-   cp .env.example .env
+   cp .env.example .env.local
    ```
 
-   Edit `.env` and add your Firebase and API credentials.
+   Edit `.env.local` with your credentials:
+
+   ```env
+   VITE_API_BASE_URL=http://localhost:5000/api/v1
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_auth_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
 
 3. **Run development server:**
    ```bash
    pnpm dev
    ```
-   Open [http://localhost:3000](http://localhost:3000)
+   Opens at [http://localhost:3000](http://localhost:3000)
 
 ## 🔧 Available Scripts
 
 ```bash
-pnpm dev          # Start development server
+pnpm dev          # Start development server (port 3000)
 pnpm build        # Build for production
-pnpm preview      # Preview production build
+pnpm preview      # Preview production build locally
+pnpm test:run     # Run tests
 pnpm lint         # Run ESLint
 pnpm lint:fix     # Fix ESLint errors
 pnpm format       # Format code with Prettier
@@ -129,13 +147,16 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 ## 🌐 API Integration
 
-The client communicates with the backend API at `VITE_API_BASE_URL`. Make sure the server is running before starting the client.
+The client communicates with the backend API at `VITE_API_BASE_URL`.
 
-API endpoints are managed through:
+**Make sure the server is running before starting the client.**
 
-- `@/services/api.ts` - Base API configuration
-- `@/config/axios.tsx` - Axios instance with interceptors
-- Feature-specific service files
+API setup:
+
+- **Base URL:** `http://localhost:5000/api/v1` (development)
+- **Config:** `@/config/axios.tsx` - Axios instance with auth interceptors
+- **Services:** `@/services/*` - Feature-specific API calls
+- **Interceptors:** Automatic JWT token attachment and error handling
 
 ## 🎨 UI Components
 
@@ -161,19 +182,43 @@ pnpm dlx shadcn@latest add button
 - Adaptive layouts for all screen sizes
 - Touch-friendly UI elements
 
-## 🚀 Deployment
+### Netlify
 
-1. **Build the project:**
+1. **Build:**
 
    ```bash
    pnpm build
    ```
 
-2. **Deploy the `dist` folder** to your hosting provider (Vercel, Netlify, etc.)
+2. **Connect repository** to Netlify for auto-deployment
 
-3. **Update environment variables** on your hosting platform
+3. **Set environment variables** in Netlify dashboard:
+   - Copy all `VITE_*` variables from `.env.local`
+   - Update `VITE_API_BASE_URL` to production server URL
 
-4. **Configure Firebase authorized domains** in Firebase Console
+4. **Configure Firebase:** -� Related Repositories
+
+- **Server:** [e-Tuitionbd-server](https://github.com/Mehedi2362/e-Tuitionbd-server)
+- **Client:** [e-Tuitionbd-client](https://github.com/Mehedi2362/e-Tuitionbd-client)
+
+## 📝 License
+
+MIT
+
+## 👥 Author
+
+B12-A11 Project Team
+
+---
+
+For issues or questions, please open an issue on GitHub.
+
+1. Build: `pnpm build`
+2. Deploy `dist/` folder to your hosting
+3. Configure redirects for SPA routing
+4. Update environment variables on hosting platform
+
+5. **Configure Firebase authorized domains** in Firebase Console
 
 ## 📝 License
 
