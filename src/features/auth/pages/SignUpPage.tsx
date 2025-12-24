@@ -131,11 +131,11 @@ const RegisterPage = () => {
                     </div>
 
                     <form onSubmit={handleSubmit((data) => signUp?.('email', data))}>
-                        <Set className="grid grid-cols-4">
+                        <Set className="grid grid-cols-7">
                             {[name, email, phone].map((field) => (
                                 <React.Fragment key={field.name}>
-                                    <Label htmlFor={field.name}>{field.label}</Label>
-                                    <InputGroup className="col-span-3">
+                                    <Label className='col-span-2' htmlFor={field.name}>{field.label}</Label>
+                                    <InputGroup className="col-span-5">
                                         <Addon align="inline-start">
                                             <field.icon />
                                         </Addon>
@@ -144,8 +144,8 @@ const RegisterPage = () => {
                                     <ErrorMessage>{errors[field.name as keyof SignUpCreds]?.message}</ErrorMessage>
                                 </React.Fragment>
                             ))}
-                            <Label htmlFor="role">{role.label}</Label>
-                            <SelectGroup className="col-span-3">
+                            <Label className='col-span-2' htmlFor="role">{role.label}</Label>
+                            <SelectGroup className="col-span-5">
                                 <Controller
                                     name="role"
                                     control={control}
@@ -172,8 +172,8 @@ const RegisterPage = () => {
                                 const fieldName = field.name as 'password' | 'confirmPassword'
                                 return (
                                     <React.Fragment key={field.name}>
-                                        <Label htmlFor={field.name}>{field.label}</Label>
-                                        <InputGroup className="col-span-3">
+                                        <Label className='col-span-2' htmlFor={field.name}>{field.label}</Label>
+                                        <InputGroup className="col-span-5">
                                             <Addon align="inline-start">
                                                 <field.icon />
                                             </Addon>
@@ -211,8 +211,8 @@ function ErrorMessage({ children }: { children: ReactNode }) {
     if (children)
         return (
             <>
-                <div className="-mt-5"></div>
-                <Error className="col-span-3 -mt-5">{children}</Error>
+                <div className="col-span-2 -mt-5"></div>
+                <Error className="col-span-5 -mt-5">{children}</Error>
             </>
         )
 }
