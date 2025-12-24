@@ -1,0 +1,123 @@
+/**
+ * Post New Tuition Page
+ * - Clean implementation using field config array
+ * - Custom hook for form logic
+ */
+
+import { Loader2 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { postTuitionFields, TuitionFormField, usePostTuition, type CreateTuitionFormData } from '@/features/tuitions'
+
+const PostTuitionPage = () => {
+    const { form, handleSubmit, handleCancel, isLoading } = usePostTuition()
+    const { register, control, formState: { errors } } = form
+
+    // Separate fields by gridCols for layout
+    const fullWidthFields = postTuitionFields.filter(f => f.gridCols === 1 || !f.gridCols)
+    const halfWidthFields = postTuitionFields.filter(f => f.gridCols === 2)
+
+    // Group half-width fields into pairs
+    const fieldPairs: typeof halfWidthFields[] = []
+    for (let i = 0; i < halfWidthFields.length; i += 2) {
+        fieldPairs.push(halfWidthFields.slice(i, i + 2))
+    }
+
+    return (
+        <div className="max-w-3xl mx-auto">
+            {/* Page Header */}
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold">Post New Tuition</h1>
+                <p className="text-muted-foreground">Fill in the details to find the perfect tutor</p>
+            </div>
+
+            {/* Post Tuition Form */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Tuition Details</CardTitle>
+                    <CardDescription>Provide accurate information to attract qualified tutors</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        
+                        {/* Title Field (Full Width) */}
+                        {fullWidthFields.slice(0, 1).map((field) => (
+                            <TuitionFormField<CreateTuitionFormData>
+                                key={field.name}
+                                config={field}
+                                register={register}
+                                control={control}
+                                error={errors[field.name as keyof typeof errors]}
+                                disabled={isLoading}
+                            />
+                        ))}
+
+                        {/* Subject and Class Row (Half Width) */}
+                        {fieldPairs[0] && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {fieldPairs[0].map((field) => (
+                                    <TuitionFormField<CreateTuitionFormData>
+                                        key={field.name}
+                                        config={field}
+                                        register={register}
+                                        control={control}
+                                        error={errors[field.name as keyof typeof errors]}
+                                        disabled={isLoading}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Location and Budget Row (Half Width) */}
+                        {fieldPairs[1] && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {fieldPairs[1].map((field) => (
+                                    <TuitionFormField<CreateTuitionFormData>
+                                        key={field.name}
+                                        config={field}
+                                        register={register}
+                                        control={control}
+                                        error={errors[field.name as keyof typeof errors]}
+                                        disabled={isLoading}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Schedule, Description, Requirements (Full Width) */}
+                        {fullWidthFields.slice(1).map((field) => (
+                            <TuitionFormField<CreateTuitionFormData>
+                                key={field.name}
+                                config={field}
+                                register={register}
+                                control={control}
+                                error={errors[field.name as keyof typeof errors]}
+                                disabled={isLoading}
+                            />
+                        ))}
+
+                        {/* Submit Buttons */}
+                        <div className="flex gap-4">
+                            <Button type="submit" className="flex-1" disabled={isLoading}>
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Posting...
+                                    </>
+                                ) : (
+                                    'Post Tuition'
+                                )}
+                            </Button>
+                            <Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
+                                Cancel
+                            </Button>
+                        </div>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
+export default PostTuitionPage
