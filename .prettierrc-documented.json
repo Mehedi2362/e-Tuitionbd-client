@@ -1,0 +1,58 @@
+{
+  "// ==================== Formatting Rules ====================": "",
+  "semi": false,
+  "// semi: Remove semicolons at the end of statements": "",
+  
+  "singleQuote": true,
+  "// singleQuote: Use single quotes instead of double quotes": "",
+  
+  "tabWidth": 4,
+  "// tabWidth: Number of spaces per indentation level": "",
+  
+  "useTabs": false,
+  "// useTabs: Use spaces instead of tabs for indentation": "",
+  
+  "trailingComma": "es5",
+  "// trailingComma: Add trailing commas where valid in ES5": "",
+  
+  "printWidth": 9999,
+  "// printWidth: Line length (set high to prevent wrapping in most cases)": "",
+  
+  "arrowParens": "always",
+  "// arrowParens: Include parentheses around arrow function parameters": "",
+  
+  "endOfLine": "lf",
+  "// endOfLine: Use LF (Unix) line endings": "",
+  
+  "bracketSpacing": true,
+  "// bracketSpacing: Print spaces between object literals": "",
+  
+  "bracketSameLine": false,
+  "// bracketSameLine: Close bracket on separate line": "",
+  
+  "jsxSingleQuote": false,
+  "// jsxSingleQuote: Use double quotes for JSX attributes": "",
+  
+  "quoteProps": "as-needed",
+  "// quoteProps: Add quotes to object properties only when necessary": "",
+  
+  "proseWrap": "never",
+  "// proseWrap: Do not wrap prose text": "",
+  
+  "htmlWhitespaceSensitivity": "ignore",
+  "// htmlWhitespaceSensitivity: Ignore whitespace sensitivity in HTML": "",
+  
+  "plugins": [],
+  "// plugins: Array of Prettier plugins to use": "",
+  
+  "// ==================== File-Specific Overrides ====================": "",
+  "overrides": [
+    {
+      "files": ["*.json", "*.md"],
+      "options": {
+        "tabWidth": 2,
+        "// Override: Use 2 spaces for JSON and Markdown files": ""
+      }
+    }
+  ]
+}
