@@ -1,7 +1,7 @@
 // ==================== Dashboard Constants ====================
 // All dashboard-related paths and endpoints
 
-import { API_BASE_URL } from '@/config/api'
+import { SERVER } from '@/config/api'
 
 // ==================== Student Dashboard Paths ====================
 export const STUDENT_DASHBOARD = '/student/dashboard'
@@ -27,10 +27,10 @@ export const ADMIN_PROFILE = '/admin/profile'
 
 // ==================== Admin API Endpoints ====================
 export const ADMIN_ENDPOINTS = {
-    GET_ANALYTICS: `${API_BASE_URL}/admin/analytics`,
-    GET_REPORTS: `${API_BASE_URL}/admin/reports`,
-    GET_TRANSACTIONS: `${API_BASE_URL}/admin/transactions`,
-    GET_DASHBOARD_STATS: `${API_BASE_URL}/admin/dashboard-stats`,
+    GET_ANALYTICS: `${SERVER}/admin/analytics`,
+    GET_REPORTS: `${SERVER}/admin/reports`,
+    GET_TRANSACTIONS: `${SERVER}/admin/transactions`,
+    GET_DASHBOARD_STATS: `${SERVER}/admin/dashboard-stats`,
 }
 
 // ==================== Sidebar Links ====================

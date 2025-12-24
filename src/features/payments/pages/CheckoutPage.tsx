@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useQuery } from '@tanstack/react-query'
 import { CreditCard, Loader2, ShieldCheck, User } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router'
-import { privateAxios } from '@/services'
+import { privateAxios } from '@/config/axios'
 
 // ==================== Types ====================
 interface Application {

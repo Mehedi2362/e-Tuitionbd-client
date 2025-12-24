@@ -1,6 +1,6 @@
 // ==================== User Service ====================
 // import { USER_ROUTES, TUTOR_ROUTES } from '@etuitionbd/shared/api'
-import { privateAxios, publicAxios } from '@/services/api'
+import { privateAxios, publicAxios } from '@/config/axios'
 import type { ApiResponse, PaginatedResponse, TutorProfile, UpdateProfileInput, User, UserRole } from '@/types'
 
 // Route constants - TODO: move to shared package

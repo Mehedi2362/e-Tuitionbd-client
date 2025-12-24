@@ -1,6 +1,6 @@
 // ==================== Application Service ====================
 import { APPLICATION_ROUTES } from '@/shared/application'
-import { privateAxios } from '@/services/api'
+import { privateAxios } from '@/config/axios'
 import type { ApiResponse, Application, ApplicationStatus, CreateApplicationInput, UpdateApplicationInput, PaginatedResponse } from '@/types'
 
 // ==================== Query Params ====================

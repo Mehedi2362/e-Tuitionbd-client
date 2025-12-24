@@ -1,6 +1,6 @@
 // ==================== Tuition Service ====================
 import { TUITION_ROUTES } from '@/shared/tuition'
-import { privateAxios, publicAxios } from '@/services/api'
+import { privateAxios, publicAxios } from '@/config/axios'
 import type { ApiResponse, CreateTuitionInput, PaginatedResponse, Tuition, TuitionFilters, UpdateTuitionInput } from '@/types'
 
 // ==================== Query Params ====================

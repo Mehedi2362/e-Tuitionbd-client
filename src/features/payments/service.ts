@@ -1,6 +1,6 @@
 // ==================== Payment Service ====================
 import { PAYMENT_ROUTES } from '@/shared/payments'
-import { privateAxios } from '@/services/api'
+import { privateAxios } from '@/config/axios'
 import type { ApiResponse, CreatePaymentInput, PaginatedResponse, Payment } from '@/types'
 
 // ==================== Query Params ====================

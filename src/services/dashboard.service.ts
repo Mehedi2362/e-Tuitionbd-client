@@ -1,5 +1,5 @@
 // ==================== Dashboard Services ====================
-import { privateAxios } from '@/services/api'
+import { privateAxios } from '@/config/axios'
 import type {
     ApiResponse,
     Application,

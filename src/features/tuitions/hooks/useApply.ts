@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 
 import { useAuth } from '@/features/auth'
 import { UserService } from '@/services'
-import type { CreateApplicationInput, User } from '@/types'
+import type { CreateApplicationInput, TutorProfile } from '@/types'
 import { useApplyForTuition } from './useApplicationQueries'
 import { applicationFormSchema, type ApplicationFormData } from '../validators'
 
@@ -26,7 +26,7 @@ export const useApply = (options: UseApplyOptions) => {
     const { user } = useAuth()
 
     // Fetch tutor's profile data
-    const { data: tutorProfile } = useQuery<User>({
+    const { data: tutorProfile } = useQuery<TutorProfile>({
         queryKey: ['tutor-profile', user?.email],
         queryFn: () => UserService.getProfile(),
         enabled: !!user && user.role === 'tutor',

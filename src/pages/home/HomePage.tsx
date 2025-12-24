@@ -7,12 +7,16 @@ import { CTASection } from './components/CTASection'
 import { FeaturesSection } from './components/FeaturesSection'
 import { HeroSection } from './components/HeroSection'
 import { HowItWorksSection } from './components/HowItWorksSection'
+import { LatestTuitionsSection } from './components/LatestTuitionsSection'
+import { LatestTutorsSection } from './components/LatestTutorsSection'
 import { TestimonialsSection } from './components/TestimonialsSection'
 
 const HomePage = () => {
     return (
         <main>
             <HeroSection />
+            <LatestTuitionsSection />
+            <LatestTutorsSection />
             <FeaturesSection />
             <HowItWorksSection />
             <TestimonialsSection />

@@ -1,9 +1,9 @@
-import { API_BASE_URL } from '@/config/api'
+import { SERVER } from '@/config/api'
 import axios from 'axios'
 import { toast } from 'sonner'
 
 // ==================== API CONFIG ====================
-const baseUrl = API_BASE_URL.replace(/\/$/, '') + '/api/v1'
+const baseUrl = SERVER.replace(/\/$/, '') + '/api/v1'
 
 // ==================== ERROR CONFIG ====================
 export const ERROR_CONFIG = {

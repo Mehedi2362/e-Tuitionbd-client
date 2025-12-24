@@ -5,7 +5,7 @@
  * Real API integration with fallback handling
  */
 
-import { useAdminUsers, useDeleteUser, useUpdateUserRole, useUpdateUserStatus } from '@/features/dashboard/hooks'
+import { useAdminUsers, useDeleteUser, useUpdateUserRole } from '@/features/dashboard/hooks'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -16,8 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { User } from '@/types'
-import { GraduationCap, MoreHorizontal, Pencil, RefreshCw, Search, Shield, Trash, UserCog, Users } from 'lucide-react'
+import { GraduationCap, MoreHorizontal, RefreshCw, Search, Shield, Trash, UserCog, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 // Role badge variant helper
@@ -96,12 +95,11 @@ const UserManagementPage = () => {
 
     // Mutations
     const updateRoleMutation = useUpdateUserRole()
-    const updateStatusMutation = useUpdateUserStatus()
     const deleteUserMutation = useDeleteUser()
 
     // Extract users with fallback
     const users = data?.data || []
-    const total = data?.total || 0
+    const total = data?.pagination?.total || users.length
 
     // Calculate stats
     const stats = useMemo(() => {
@@ -116,11 +114,6 @@ const UserManagementPage = () => {
     // Handle role change
     const handleRoleChange = (email: string, newRole: string) => {
         updateRoleMutation.mutate({ email, role: newRole })
-    }
-
-    // Handle status change
-    const handleStatusChange = (email: string, newStatus: string) => {
-        updateStatusMutation.mutate({ email, status: newStatus })
     }
 
     // Handle delete user
@@ -268,14 +261,10 @@ const UserManagementPage = () => {
                                             <TableCell>{user.email || 'N/A'}</TableCell>
                                             <TableCell>{user.phone || 'N/A'}</TableCell>
                                             <TableCell>
-                                                <Badge variant={getRoleVariant(user.role)}>
-                                                    {user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || 'N/A'}
-                                                </Badge>
+                                                <Badge variant={getRoleVariant(user.role)}>{user.role?.charAt(0).toUpperCase() + user.role?.slice(1) || 'N/A'}</Badge>
                                             </TableCell>
                                             <TableCell>
-                                                <Badge variant={getStatusVariant(user.status || 'active')}>
-                                                    {(user.status || 'active').charAt(0).toUpperCase() + (user.status || 'active').slice(1)}
-                                                </Badge>
+                                                <Badge variant={getStatusVariant(user.status || 'active')}>{(user.status || 'active').charAt(0).toUpperCase() + (user.status || 'active').slice(1)}</Badge>
                                             </TableCell>
                                             <TableCell>{user.createdAt ? formatDate(user.createdAt) : 'N/A'}</TableCell>
                                             <TableCell className="text-right">
@@ -316,9 +305,7 @@ const UserManagementPage = () => {
                                                             <AlertDialogContent>
                                                                 <AlertDialogHeader>
                                                                     <AlertDialogTitle>Delete User?</AlertDialogTitle>
-                                                                    <AlertDialogDescription>
-                                                                        Are you sure you want to delete this user? This action cannot be undone.
-                                                                    </AlertDialogDescription>
+                                                                    <AlertDialogDescription>Are you sure you want to delete this user? This action cannot be undone.</AlertDialogDescription>
                                                                 </AlertDialogHeader>
                                                                 <AlertDialogFooter>
                                                                     <AlertDialogCancel>Cancel</AlertDialogCancel>

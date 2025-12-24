@@ -1,5 +1,5 @@
 // ==================== User Service ====================
-import { privateAxios, publicAxios } from './api';
+import { privateAxios, publicAxios } from "@/config/axios";
 
 export interface UserQueryParams {
     page?: number;

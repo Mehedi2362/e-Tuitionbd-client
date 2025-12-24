@@ -1,7 +1,7 @@
 // ==================== Tutors Components Barrel Export ====================
 
 // Tutor List Components
-export { default as TutorCard } from './TutorCard'
+export { default as TutorCard, type Tutor } from './TutorCard'
 export { default as TutorSearchFilters } from './TutorSearchFilters'
 export { default as TutorsGrid } from './TutorsGrid'
 
