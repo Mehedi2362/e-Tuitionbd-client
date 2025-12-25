@@ -54,10 +54,10 @@ export function HeroSection() {
         <section className="relative min-h-[calc(100vh-4rem)] flex items-center overflow-hidden">
             {/* Background gradient */}
             <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-secondary/5" />
-            <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-20 left-20 w-72 h-72 bg-secondary/10 rounded-full blur-3xl" />
+            <div className="hidden sm:block absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+            <div className="hidden sm:block absolute bottom-20 left-20 w-72 h-72 bg-secondary/10 rounded-full blur-3xl" />
 
-            <div className="container relative z-10 py-16 lg:py-24">
+            <div className="container relative z-10 px-4 py-8 sm:py-12 lg:py-24">
                 <motion.div className="max-w-4xl mx-auto text-center" variants={containerVariants} initial="hidden" animate="visible">
                     {/* Badge */}
                     <motion.div variants={itemVariants}>
@@ -68,27 +68,27 @@ export function HeroSection() {
                     </motion.div>
 
                     {/* Heading */}
-                    <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                    <motion.h1 variants={itemVariants} className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4 sm:mb-6">
                         আপনার সন্তানের জন্য
-                        <span className="text-primary block mt-2">সেরা টিউটর খুঁজুন</span>
+                        <span className="text-primary block mt-1 sm:mt-2">সেরা টিউটর খুঁজুন</span>
                     </motion.h1>
 
                     {/* Subheading */}
-                    <motion.p variants={itemVariants} className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                    <motion.p variants={itemVariants} className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
                         eTuitionBd এ যোগ্য এবং অভিজ্ঞ টিউটরদের সাথে যুক্ত হন। আপনার পছন্দের বিষয়, লোকেশন এবং বাজেট অনুযায়ী টিউশন খুঁজুন।
                     </motion.p>
 
                     {/* Search Form */}
-                    <motion.form variants={itemVariants} onSubmit={handleSearch} className="max-w-2xl mx-auto mb-8">
-                        <InputGroup className="h-14 bg-background shadow-lg">
-                            <InputGroupAddon>
+                    <motion.form variants={itemVariants} onSubmit={handleSearch} className="max-w-2xl mx-auto mb-6 sm:mb-8">
+                        <InputGroup className="h-12 sm:h-14 bg-background shadow-lg">
+                            <InputGroupAddon className="hidden sm:flex">
                                 <InputGroupText>
                                     <Search className="h-5 w-5" />
                                 </InputGroupText>
                             </InputGroupAddon>
-                            <InputGroupInput placeholder="বিষয়, ক্লাস, বা এলাকা দিয়ে খুঁজুন..." className="text-lg" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                            <InputGroupInput placeholder="বিষয়, ক্লাস, এলাকা..." className="text-base sm:text-lg" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
                             <InputGroupAddon align="inline-end">
-                                <Button type="submit" size="lg" className="h-10 px-6">
+                                <Button type="submit" size="sm" className="h-9 px-3 sm:h-10 sm:px-6 text-sm sm:text-base">
                                     খুঁজুন
                                 </Button>
                             </InputGroupAddon>
@@ -96,38 +96,38 @@ export function HeroSection() {
                     </motion.form>
 
                     {/* CTA Buttons */}
-                    <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                        <Button size="lg" onClick={() => navigate(TUITIONS)} className="gap-2">
+                    <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-10 sm:mb-12">
+                        <Button onClick={() => navigate(TUITIONS)} className="gap-2 h-10 sm:h-12">
                             টিউশন ব্রাউজ করুন
                             <ArrowRight className="h-4 w-4" />
                         </Button>
-                        <Button size="lg" variant="outline" onClick={() => navigate(SIGNUP)}>
+                        <Button variant="outline" onClick={() => navigate(SIGNUP)} className="h-10 sm:h-12">
                             <Users className="mr-2 h-4 w-4" />
                             টিউটর হিসেবে যোগ দিন
                         </Button>
                     </motion.div>
 
                     {/* Stats Preview */}
-                    <motion.div variants={itemVariants} className="flex flex-wrap justify-center gap-8 text-center">
+                    <motion.div variants={itemVariants} className="grid grid-cols-3 gap-6 sm:gap-8 text-center">
                         <div>
-                            <p className="text-3xl font-bold text-primary">
+                            <p className="text-2xl sm:text-3xl font-bold text-primary">
                                 <AnimatedCounter value={5000} suffix="+" />
                             </p>
-                            <p className="text-sm text-muted-foreground">সক্রিয় টিউশন</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground mt-1">সক্রিয় টিউশন</p>
                         </div>
-                        <div className="w-px bg-border" />
+                        <div className="hidden sm:block h-12 w-px bg-border mx-auto" />
                         <div>
-                            <p className="text-3xl font-bold text-primary">
+                            <p className="text-2xl sm:text-3xl font-bold text-primary">
                                 <AnimatedCounter value={2000} suffix="+" />
                             </p>
-                            <p className="text-sm text-muted-foreground">যোগ্য টিউটর</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground mt-1">যোগ্য টিউটর</p>
                         </div>
-                        <div className="w-px bg-border" />
+                        <div className="hidden sm:block h-12 w-px bg-border mx-auto" />
                         <div>
-                            <p className="text-3xl font-bold text-primary">
+                            <p className="text-2xl sm:text-3xl font-bold text-primary">
                                 <AnimatedCounter value={10000} suffix="+" />
                             </p>
-                            <p className="text-sm text-muted-foreground">সন্তুষ্ট শিক্ষার্থী</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground mt-1">সন্তুষ্ট শিক্ষার্থী</p>
                         </div>
                     </motion.div>
                 </motion.div>
