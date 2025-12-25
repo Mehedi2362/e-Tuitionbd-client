@@ -9,11 +9,11 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 const authService = {
     // Get current user from cookie-authenticated session
     getUser: (): Promise<User> =>
-        privateAxios.get(AUTH_ROUTES.ME).then(res => res.data.data?.user),
+        privateAxios.get(AUTH_ROUTES.ME).then(res => res.data.data.user),
 
     // Sign in with email (Firebase token sent to server, server sets cookies)
     signInWithEmail: async (creds: SignInCreds): Promise<User> =>
-        publicAxios.post(AUTH_ROUTES.SIGNIN, creds).then(res => res.data.data?.user),
+        publicAxios.post(AUTH_ROUTES.SIGNIN, creds).then(res => res.data.data.user),
 
     // Sign in with Google
     signInWithGoogle: async (): Promise<User> => {
@@ -26,12 +26,12 @@ const authService = {
             {},
             { headers: { Authorization: `Bearer ${idToken}` } }
         )
-        return response.data.data?.user
+        return response.data.data.user
     },
 
     // Register new user
     signUpWithEmail: async (creds: SignUpCreds): Promise<User> =>
-        publicAxios.post(AUTH_ROUTES.SIGNUP, creds).then(res => res.data.data?.user),
+        publicAxios.post(AUTH_ROUTES.SIGNUP, creds).then(res => res.data.data.user),
 
 
     // Sign out (clears HTTP-only cookies)
@@ -54,7 +54,7 @@ const authService = {
 
     // Verify token (returns user if valid)
     verifyToken: (): Promise<User> =>
-        privateAxios.get(AUTH_ROUTES.VERIFY).then(res => res.data.data?.user),
+        privateAxios.get(AUTH_ROUTES.VERIFY).then(res => res.data.data.user),
 }
 
 export default authService

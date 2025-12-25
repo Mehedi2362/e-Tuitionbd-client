@@ -40,11 +40,6 @@ export type AuthContextValue = {
     signOut: AuthHandler
 }
 
-// ==================== Config ====================
-type AuthConfig = {
-    fetchUser: () => Promise<User | null>
-}
-
 // ==================== Context ====================
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
 
@@ -58,36 +53,6 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// ==================== Provider Factory ====================
-export const createAuthProvider = (config: AuthConfig) => {
-    const AuthProvider = ({ children }: { children: ReactNode }) => {
-        const [user, setUser] = useState<User | null>(null)
-        const [loading, setLoading] = useState<boolean>(true)
-
-        const syncUser = useCallback(async () => {
-            try {
-                setUser(await config.fetchUser())
-            } catch {
-                setUser(null)
-            } finally {
-                setLoading(false)
-            }
-        }, [config])
-
-        useEffect(() => {
-            syncUser()
-            window.addEventListener('focus', syncUser)
-            return () => window.removeEventListener('focus', syncUser)
-        }, [syncUser])
-
-        const value = useMemo(() => ({ user, setUser, loading, setLoading, refetch: syncUser }), [user, loading, syncUser])
-
-        return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    }
-
-    return AuthProvider
-}
-
 // ==================== Default AuthProvider ====================
 // Simple provider that doesn't auto-fetch user (for basic usage)
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -98,7 +63,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true)
         try {
             const profile = await authService.getUser()
-            console.table( profile)
             setUser(profile ?? null)
         } catch {
             setUser(null)
@@ -109,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         refetch()
-    }, [])
+    }, [refetch])
 
     const value = useMemo(() => ({ user, setUser, loading, setLoading, refetch }), [user, loading, refetch])
 
@@ -146,9 +110,10 @@ export const useAuth = (options: UseAuthOptions = {}) => {
             setLoading(true)
             setError(null)
             try {
-                const user = await actionFn(type, creds)
-                onSuccess?.(user)
-                setUser(shouldSetUserFromResult ? user : null)
+                const _user = await actionFn(type, creds)
+                setUser(shouldSetUserFromResult ? _user : null)
+                console.table(_user)
+                onSuccess?.(_user)
             } catch (err) {
                 const errorMessage = err instanceof Error ? err.message : String(err)
                 setError(errorMessage)

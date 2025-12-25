@@ -7,7 +7,7 @@
 
 import { Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react'
 import { useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 import { Button } from '@/components/ui/button'
 import { CardContent as Body, Card, CardDescription, CardFooter as Footer, CardHeader as Header, CardTitle as Title } from '@/components/ui/card'
@@ -28,6 +28,8 @@ import authService from '@/features/auth/service'
 // Authentication form component with email/password and OAuth support
 
 const LoginPage = () => {
+    const navigate = useNavigate()
+
     const {
         signIn,
         loading: authLoading,
@@ -38,8 +40,15 @@ const LoginPage = () => {
             if (type === 'google') return (await authService.signInWithGoogle()) || null
             return null
         },
-        onSuccess: () => toast.success('Successfully signed in!'),
-        onError: (err) => toast.error('Failed to sign in.') && console.error(err),
+        onSuccess: (user) => {
+            console.info('Successfully signed in! API successfully fetched')
+            console.table(user)
+            if (user?.role) navigate(`/${user.role}/dashboard`, { replace: true })
+        },
+        onError: (err) => {
+            toast.error((err as Error).message)
+            console.error(err)
+        },
     })
 
     // Form setup

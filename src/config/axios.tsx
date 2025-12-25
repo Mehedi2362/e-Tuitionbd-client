@@ -104,20 +104,6 @@ privateAxios.interceptors.response.use(
             toast.error(message)
         }
 
-        // // Auth error (401) - try refresh or redirect
-        // if (ERROR_CONFIG.authErrors.includes(status) && !originalRequest._retry) {
-        //     originalRequest._retry = true
-        //     try {
-        //         // Try to refresh token (cookie-based)
-        //         await publicAxios.post('/auth/refresh')
-        //         return privateAxios(originalRequest)
-        //     } catch {
-        //         // Refresh failed - redirect to login
-        //         toast.error(ERROR_CONFIG.messages[401])
-        //         // window.location.href = '/login'
-        //     }
-        // }
-
         // Forbidden (403) - show toast
         if (ERROR_CONFIG.forbiddenErrors.includes(status)) {
             toast.error(ERROR_CONFIG.messages[403])

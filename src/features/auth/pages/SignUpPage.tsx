@@ -9,7 +9,7 @@ import { FieldLabel as Label, FieldSet as Set, FieldError as Error } from '@/com
 import { InputGroupAddon as Addon, InputGroupInput as Input, InputGroup } from '@/components/ui/input-group'
 import { Select, SelectTrigger as Trigger, SelectValue as Value, SelectContent as Content, SelectItem as Item, SelectGroup } from '@/components/ui/select'
 import { Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -84,6 +84,7 @@ const confirmPassword = {
 
 // ==================== Component ====================
 const RegisterPage = () => {
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState({ password: false, confirmPassword: false })
     const {
         register,
@@ -107,11 +108,13 @@ const RegisterPage = () => {
             if (type === 'google') return (await authService.signInWithGoogle()) || null
             return null
         },
-        onSuccess() {
+        onSuccess(user) {
             toast.success('Successfully signed up!')
+            if (user?.role) navigate(`/${user.role}/dashboard`, { replace: true })
         },
-        onError() {
-            toast.error('Failed to sign up.')
+        onError(err) {
+            toast.error((err as Error).message)
+            console.error(err)
         },
     })
     return (
@@ -134,7 +137,9 @@ const RegisterPage = () => {
                         <Set className="grid grid-cols-7">
                             {[name, email, phone].map((field) => (
                                 <React.Fragment key={field.name}>
-                                    <Label className='col-span-2' htmlFor={field.name}>{field.label}</Label>
+                                    <Label className="col-span-2" htmlFor={field.name}>
+                                        {field.label}
+                                    </Label>
                                     <InputGroup className="col-span-5">
                                         <Addon align="inline-start">
                                             <field.icon />
@@ -144,7 +149,9 @@ const RegisterPage = () => {
                                     <ErrorMessage>{errors[field.name as keyof SignUpCreds]?.message}</ErrorMessage>
                                 </React.Fragment>
                             ))}
-                            <Label className='col-span-2' htmlFor="role">{role.label}</Label>
+                            <Label className="col-span-2" htmlFor="role">
+                                {role.label}
+                            </Label>
                             <SelectGroup className="col-span-5">
                                 <Controller
                                     name="role"
@@ -172,7 +179,9 @@ const RegisterPage = () => {
                                 const fieldName = field.name as 'password' | 'confirmPassword'
                                 return (
                                     <React.Fragment key={field.name}>
-                                        <Label className='col-span-2' htmlFor={field.name}>{field.label}</Label>
+                                        <Label className="col-span-2" htmlFor={field.name}>
+                                            {field.label}
+                                        </Label>
                                         <InputGroup className="col-span-5">
                                             <Addon align="inline-start">
                                                 <field.icon />

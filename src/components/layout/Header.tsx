@@ -66,7 +66,7 @@ const Header = () => {
             return null
         },
     })
-
+    console.log('Header - isAuthenticated:', isAuthenticated, 'user:', user)
     // Get dashboard route based on role
     const getDashboardRoute = (role?: string): string => {
         switch (role) {
