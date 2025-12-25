@@ -51,8 +51,7 @@ export type TuitionStatus = 'pending' | 'approved' | 'rejected' | 'completed'
 // Tuition interface for MongoDB tuition document (matches server ITuition)
 export interface Tuition {
     _id: string
-    studentName?: string
-    studentEmail?: string
+    student: {email:string, name:string}
     subject: string
     class: string
     location: string
@@ -196,7 +195,7 @@ export interface PaginationMeta {
     totalPages: number
 }
 
-// Paginated response type for listings (matches server)
+// Paginated response type for listings (consistent with server)
 export interface PaginatedResponse<T> {
     success: boolean
     data: T[]

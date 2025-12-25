@@ -61,7 +61,7 @@ const TuitionDetailsPage = () => {
                 {/* Sidebar - Student Info & Apply Button */}
                 <div className="space-y-6">
                     {/* Student Info Card */}
-                    <StudentInfoCard studentName={tuition.studentName} studentEmail={tuition.studentEmail} />
+                    <StudentInfoCard studentName={tuition.student.name} studentEmail={tuition.student.email} />
 
                     {/* Apply Button with Modal - Only for tutors */}
                     {canApply && tuitionId && user && <ApplyModal tuitionId={tuitionId} tutorName={user.name} tutorEmail={user.email} />}

@@ -41,8 +41,7 @@ const LoginPage = () => {
             return null
         },
         onSuccess: (user) => {
-            console.info('Successfully signed in! API successfully fetched')
-            console.table(user)
+            toast.success('Successfully signed in!')
             if (user?.role) navigate(`/${user.role}/dashboard`, { replace: true })
         },
         onError: (err) => {

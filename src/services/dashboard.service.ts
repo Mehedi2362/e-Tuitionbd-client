@@ -122,6 +122,31 @@ export const AdminDashboardService = {
                 pagination: { page: 1, limit: 10, total: 0, totalPages: 0 }
             })),
 
+    getTuitionStats: (): Promise<{
+        total: number
+        pending: number
+        approved: number
+        rejected: number
+    }> =>
+        privateAxios.get<ApiResponse<{
+            total: number
+            pending: number
+            approved: number
+            rejected: number
+        }>>('/admin/tuitions/stats/overview')
+            .then(res => res.data.data || {
+                total: 0,
+                pending: 0,
+                approved: 0,
+                rejected: 0
+            })
+            .catch(() => ({
+                total: 0,
+                pending: 0,
+                approved: 0,
+                rejected: 0
+            })),
+
     updateTuitionStatus: (id: string, status: 'approved' | 'rejected'): Promise<Tuition | null> =>
         privateAxios.patch<ApiResponse<Tuition>>(`/admin/tuitions/${id}/status`, { status })
             .then(res => res.data.data || null)
@@ -131,10 +156,25 @@ export const AdminDashboardService = {
     getAllPayments: (params?: {
         page?: number
         limit?: number
+        status?: string
     }): Promise<PaginatedResponse<Payment>> =>
         privateAxios.get<PaginatedResponse<Payment>>('/admin/payments', { params })
             .then(res => res.data)
             .catch((): PaginatedResponse<Payment> => ({
+                success: true,
+                data: [],
+                pagination: { page: 1, limit: 10, total: 0, totalPages: 0 }
+            })),
+
+    // Application management
+    getApplications: (params?: {
+        page?: number
+        limit?: number
+        status?: string
+    }): Promise<PaginatedResponse<Application>> =>
+        privateAxios.get<PaginatedResponse<Application>>('/admin/applications', { params })
+            .then(res => res.data)
+            .catch((): PaginatedResponse<Application> => ({
                 success: true,
                 data: [],
                 pagination: { page: 1, limit: 10, total: 0, totalPages: 0 }

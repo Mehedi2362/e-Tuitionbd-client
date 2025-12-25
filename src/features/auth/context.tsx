@@ -112,7 +112,6 @@ export const useAuth = (options: UseAuthOptions = {}) => {
             try {
                 const _user = await actionFn(type, creds)
                 setUser(shouldSetUserFromResult ? _user : null)
-                console.table(_user)
                 onSuccess?.(_user)
             } catch (err) {
                 const errorMessage = err instanceof Error ? err.message : String(err)

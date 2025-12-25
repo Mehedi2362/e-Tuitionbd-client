@@ -23,6 +23,7 @@ import { BookOpen, GraduationCap, Info, LayoutDashboard, LogOut, Mail, Menu, Moo
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import authService from '@/features/auth/service'
+import { toast } from 'sonner'
 
 // ==================== Navigation Items ====================
 const navigationItems = [
@@ -65,8 +66,10 @@ const Header = () => {
             await authService.signOut()
             return null
         },
+        onSuccess: () => {
+            toast.success('Successfully signed out!')
+        }
     })
-    console.log('Header - isAuthenticated:', isAuthenticated, 'user:', user)
     // Get dashboard route based on role
     const getDashboardRoute = (role?: string): string => {
         switch (role) {

@@ -81,10 +81,9 @@ export const GuestRoute = ({ children, redirectTo }: GuestRouteProps) => {
         return <LoadingSpinner />
     }
 
+    const from = location.state?.from?.pathname
     if (isAuthenticated) {
         // Redirect based on role if no specific redirect path
-        const from = location.state?.from?.pathname
-
         if (from) {
             return <Navigate to={from} replace />
         }

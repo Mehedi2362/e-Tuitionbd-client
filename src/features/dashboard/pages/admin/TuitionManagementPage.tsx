@@ -3,20 +3,21 @@
  * View all tuition posts, approve/reject with real API
  */
 
-import { useAdminTuitions, useUpdateTuitionStatus } from '@/features/dashboard/hooks'
+import { useAdminTuitions, useUpdateTuitionStatus, useAdminTuitionStats } from '@/features/dashboard/hooks'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import type { TuitionStatus } from '@/types'
 import { BookOpen, Calendar, Check, CheckCircle, Clock, DollarSign, Eye, FileText, Loader2, MapPin, RefreshCw, Search, X, XCircle } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // Status badge variant helper
 const getStatusVariant = (status: TuitionStatus) => {
@@ -55,11 +56,11 @@ const StatCardSkeleton = () => (
 
 const TableSkeleton = () => (
     <>
-        {[1, 2, 3].map((i) => (
+        {[...Array(10)].map((_, i) => (
             <TableRow key={i}>
                 {[1, 2, 3, 4, 5, 6].map((j) => (
                     <TableCell key={j}>
-                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-8 w-full" />
                     </TableCell>
                 ))}
             </TableRow>
@@ -71,29 +72,37 @@ const TuitionManagementPage = () => {
     // State for search and filters
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState('all')
+    const [page, setPage] = useState(1)
+    const limit = 10
 
-    // Fetch all tuitions from backend with real API
+    // Fetch tuitions (paginated only)
     const { data, isLoading, error, refetch } = useAdminTuitions({
+        page,
+        limit,
         search: searchQuery || undefined,
         status: statusFilter !== 'all' ? statusFilter : undefined,
     })
+
+    // Fetch stats separately (not paginated)
+    const { data: statsData, isLoading: statsLoading } = useAdminTuitionStats()
 
     // Mutations
     const updateStatusMutation = useUpdateTuitionStatus()
 
     // Extract tuitions with fallback
-    const tuitions = data?.data || []
-    const total = data?.pagination?.total || tuitions.length
+    const tuitions = useMemo(() => data?.data || [], [data?.data])
 
-    // Calculate stats
+    // Calculate stats from separate API call
     const stats = useMemo(() => {
-        return {
-            total: total || 0,
-            pending: tuitions.filter((t) => t.status === 'pending').length,
-            approved: tuitions.filter((t) => t.status === 'approved').length,
-            rejected: tuitions.filter((t) => t.status === 'rejected').length,
-        }
-    }, [tuitions, total])
+        return (
+            statsData || {
+                total: 0,
+                pending: 0,
+                approved: 0,
+                rejected: 0,
+            }
+        )
+    }, [statsData])
 
     // Handle approve
     const handleApprove = (tuitionId: string) => {
@@ -128,7 +137,7 @@ const TuitionManagementPage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {isLoading ? (
+                {statsLoading ? (
                     <>
                         {[1, 2, 3, 4].map((i) => (
                             <StatCardSkeleton key={i} />
@@ -235,8 +244,8 @@ const TuitionManagementPage = () => {
                                             <TableCell>৳{tuition.budget?.toLocaleString() || 0}</TableCell>
                                             <TableCell>
                                                 <div>
-                                                    <p className="font-medium">{tuition.studentName || 'Unknown'}</p>
-                                                    <p className="text-xs text-muted-foreground">{tuition.studentEmail || 'N/A'}</p>
+                                                    <p className="font-medium">{tuition.student.name || 'Unknown'}</p>
+                                                    <p className="text-xs text-muted-foreground">{tuition.student.email || 'N/A'}</p>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -256,7 +265,7 @@ const TuitionManagementPage = () => {
                                                             <DialogHeader>
                                                                 <DialogTitle>{tuition.subject || 'Tuition Details'}</DialogTitle>
                                                                 <DialogDescription>
-                                                                    Posted by {tuition.studentName || 'Unknown'} on {tuition.createdAt ? formatDate(tuition.createdAt) : 'N/A'}
+                                                                    Posted by {tuition.student.email || 'Unknown'} on {tuition.createdAt ? formatDate(tuition.createdAt) : 'N/A'}
                                                                 </DialogDescription>
                                                             </DialogHeader>
                                                             <div className="space-y-4 py-4">
@@ -354,6 +363,48 @@ const TuitionManagementPage = () => {
                             </TableBody>
                         </Table>
                     </div>
+
+                    {/* Pagination */}
+                    {!isLoading && tuitions.length > 0 && data?.pagination && (
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                Showing {(page - 1) * limit + 1} to {Math.min(page * limit, data.pagination.total)} of {data.pagination.total} tuitions
+                            </p>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious onClick={() => setPage((p) => Math.max(1, p - 1))} className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                    </PaginationItem>
+
+                                    {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1)
+                                        .filter((p) => {
+                                            return p === 1 || p === data.pagination.totalPages || (p >= page - 1 && p <= page + 1)
+                                        })
+                                        .map((p, i, arr) => {
+                                            const showEllipsisBefore = i > 0 && p - arr[i - 1] > 1
+                                            return (
+                                                <React.Fragment key={p}>
+                                                    {showEllipsisBefore && (
+                                                        <PaginationItem>
+                                                            <PaginationEllipsis />
+                                                        </PaginationItem>
+                                                    )}
+                                                    <PaginationItem>
+                                                        <PaginationLink onClick={() => setPage(p)} isActive={page === p} className="cursor-pointer">
+                                                            {p}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                </React.Fragment>
+                                            )
+                                        })}
+
+                                    <PaginationItem>
+                                        <PaginationNext onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))} className={page === data.pagination.totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

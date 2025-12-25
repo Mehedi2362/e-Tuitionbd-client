@@ -21,6 +21,7 @@ export const dashboardKeys = {
     adminAnalytics: ['admin', 'analytics'] as const,
     adminUsers: (params?: QueryParams) => ['admin', 'users', params] as const,
     adminTuitions: (params?: QueryParams) => ['admin', 'tuitions', params] as const,
+    adminApplications: (params?: QueryParams) => ['admin', 'applications', params] as const,
     adminPayments: (params?: QueryParams) => ['admin', 'payments', params] as const,
 
     // Student
@@ -122,6 +123,13 @@ export const useAdminTuitions = (params?: {
     })
 }
 
+export const useAdminTuitionStats = () => {
+    return useQuery({
+        queryKey: ['admin', 'tuitions', 'stats'],
+        queryFn: () => AdminDashboardService.getTuitionStats(),
+    })
+}
+
 export const useUpdateTuitionStatus = () => {
     const queryClient = useQueryClient()
 
@@ -130,6 +138,7 @@ export const useUpdateTuitionStatus = () => {
             AdminDashboardService.updateTuitionStatus(id, status),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['admin', 'tuitions'] })
+            queryClient.invalidateQueries({ queryKey: ['admin', 'tuitions', 'stats'] })
             toast.success('Tuition status updated successfully')
         },
         onError: () => {
@@ -141,10 +150,22 @@ export const useUpdateTuitionStatus = () => {
 export const useAdminPayments = (params?: {
     page?: number
     limit?: number
+    status?: string
 }) => {
     return useQuery({
         queryKey: dashboardKeys.adminPayments(params),
         queryFn: () => AdminDashboardService.getAllPayments(params),
+    })
+}
+
+export const useAdminApplications = (params?: {
+    page?: number
+    limit?: number
+    status?: string
+}) => {
+    return useQuery({
+        queryKey: dashboardKeys.adminApplications(params),
+        queryFn: () => AdminDashboardService.getApplications(params),
     })
 }
 

@@ -91,19 +91,19 @@ const TuitionCard = ({ tuition }: { tuition: Tuition }) => {
                         <Avatar>
                             <AvatarImage src="" />
                             <AvatarFallback>
-                                {tuition.studentName
+                                {tuition.student.name
                                     ?.split(' ')
                                     .map((n) => n[0])
                                     .join('') || 'S'}
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                            <p className="font-medium">{tuition.studentName || 'Unknown Student'}</p>
+                            <p className="font-medium">{tuition.student.name || 'Unknown Student'}</p>
                             <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                                {tuition.studentEmail && (
+                                    {tuition.student.email && (
                                     <span className="flex items-center gap-1">
                                         <Mail className="h-3 w-3" />
-                                        {tuition.studentEmail}
+                                        {tuition.student.email}
                                     </span>
                                 )}
                             </div>

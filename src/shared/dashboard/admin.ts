@@ -8,6 +8,7 @@ export const ADMIN_USER_ROUTES = {
     ALL: "/admin/users",
     BY_ID: (uid: string) => `/admin/users/${uid}`,
     UPDATE_ROLE: (uid: string) => `/admin/users/${uid}/role`,
+    UPDATE_STATUS: (uid: string) => `/admin/users/${uid}/status`,
     DELETE: (uid: string) => `/admin/users/${uid}`,
 } as const;
 

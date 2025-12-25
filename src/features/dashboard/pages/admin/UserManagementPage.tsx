@@ -5,7 +5,7 @@
  * Real API integration with fallback handling
  */
 
-import { useAdminUsers, useDeleteUser, useUpdateUserRole } from '@/features/dashboard/hooks'
+import { useAdminUsers, useDeleteUser, useUpdateUserRole, useAdminAnalytics } from '@/features/dashboard/hooks'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -13,11 +13,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { GraduationCap, MoreHorizontal, RefreshCw, Search, Shield, Trash, UserCog, Users } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // Role badge variant helper
 const getRoleVariant = (role: string) => {
@@ -70,11 +71,11 @@ const StatCardSkeleton = () => (
 
 const TableSkeleton = () => (
     <>
-        {[1, 2, 3, 4].map((i) => (
+        {[...Array(10)].map((_, i) => (
             <TableRow key={i}>
                 {[1, 2, 3, 4, 5, 6, 7].map((j) => (
                     <TableCell key={j}>
-                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-8 w-full" />
                     </TableCell>
                 ))}
             </TableRow>
@@ -86,9 +87,13 @@ const UserManagementPage = () => {
     // State for search and filters
     const [searchQuery, setSearchQuery] = useState('')
     const [roleFilter, setRoleFilter] = useState('all')
+    const [page, setPage] = useState(1)
+    const limit = 10
 
     // Fetch all users from backend with real API
     const { data, isLoading, error, refetch } = useAdminUsers({
+        page,
+        limit,
         search: searchQuery || undefined,
         role: roleFilter !== 'all' ? roleFilter : undefined,
     })
@@ -97,19 +102,24 @@ const UserManagementPage = () => {
     const updateRoleMutation = useUpdateUserRole()
     const deleteUserMutation = useDeleteUser()
 
+    // Fetch analytics for accurate role distribution across ALL users (separate loading)
+    const { data: analyticsData, isLoading: statsLoading } = useAdminAnalytics()
+
     // Extract users with fallback
-    const users = data?.data || []
+    const users = useMemo(() => data?.data || [], [data?.data])
     const total = data?.pagination?.total || users.length
 
-    // Calculate stats
+    // Calculate stats from analytics data (accurate across all pages)
     const stats = useMemo(() => {
-        return {
-            total: total || 0,
-            students: users.filter((u) => u.role === 'student').length,
-            tutors: users.filter((u) => u.role === 'tutor').length,
-            admins: users.filter((u) => u.role === 'admin').length,
-        }
-    }, [users, total])
+        const usersByRole = analyticsData?.usersByRole || []
+
+        const students = usersByRole.find((u) => u.role === 'student')?.count || 0
+        const tutors = usersByRole.find((u) => u.role === 'tutor')?.count || 0
+        const admins = usersByRole.find((u) => u.role === 'admin')?.count || 0
+        const total = students + tutors + admins
+
+        return { total, students, tutors, admins }
+    }, [analyticsData?.usersByRole])
 
     // Handle role change
     const handleRoleChange = (email: string, newRole: string) => {
@@ -144,9 +154,9 @@ const UserManagementPage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {isLoading ? (
+                {statsLoading ? (
                     <>
-                        {[1, 2, 3, 4].map((i) => (
+                        {[...Array(4)].map((_, i) => (
                             <StatCardSkeleton key={i} />
                         ))}
                     </>
@@ -324,6 +334,50 @@ const UserManagementPage = () => {
                             </TableBody>
                         </Table>
                     </div>
+
+                    {/* Pagination */}
+                    {!isLoading && users.length > 0 && data?.pagination && (
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-muted-foreground">
+                                Showing {(page - 1) * limit + 1} to {Math.min(page * limit, total)} of {total} users
+                            </p>
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious onClick={() => setPage((p) => Math.max(1, p - 1))} className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                    </PaginationItem>
+
+                                    {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1)
+                                        .filter((p) => {
+                                            // Show first page, last page, current page, and pages around current
+                                            return p === 1 || p === data.pagination.totalPages || (p >= page - 1 && p <= page + 1)
+                                        })
+                                        .map((p, i, arr) => {
+                                            // Add ellipsis if there's a gap
+                                            const showEllipsisBefore = i > 0 && p - arr[i - 1] > 1
+                                            return (
+                                                <React.Fragment key={p}>
+                                                    {showEllipsisBefore && (
+                                                        <PaginationItem>
+                                                            <PaginationEllipsis />
+                                                        </PaginationItem>
+                                                    )}
+                                                    <PaginationItem>
+                                                        <PaginationLink onClick={() => setPage(p)} isActive={page === p} className="cursor-pointer">
+                                                            {p}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                </React.Fragment>
+                                            )
+                                        })}
+
+                                    <PaginationItem>
+                                        <PaginationNext onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))} className={page === data.pagination.totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

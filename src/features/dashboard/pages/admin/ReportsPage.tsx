@@ -8,11 +8,13 @@ import { useAdminAnalytics, useAdminDashboard, useAdminPayments } from '@/featur
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { PaymentStatus } from '@/types'
 import { BookOpen, DollarSign, FileText, RefreshCw, TrendingUp, Users } from 'lucide-react'
+import React, { useState } from 'react'
 
 // Format date helper
 const formatDate = (dateString: string) => {
@@ -66,10 +68,13 @@ const TableSkeleton = () => (
 )
 
 const ReportsPage = () => {
+    const [page, setPage] = useState(1)
+    const limit = 10
+
     // Fetch analytics data from backend with real API
     const { data: dashboardData, isLoading: isLoadingDashboard, error: dashboardError, refetch: refetchDashboard } = useAdminDashboard()
     const { data: analyticsData, isLoading: isLoadingAnalytics } = useAdminAnalytics()
-    const { data: paymentsData, isLoading: isLoadingPayments } = useAdminPayments({ limit: 10 })
+    const { data: paymentsData, isLoading: isLoadingPayments } = useAdminPayments({ page, limit })
 
     // Extract data with fallbacks
     const stats = dashboardData || {
@@ -216,6 +221,48 @@ const ReportsPage = () => {
                                     )}
                                 </TableBody>
                             </Table>
+
+                            {/* Pagination */}
+                            {!isLoadingPayments && payments.length > 0 && paymentsData?.pagination && (
+                                <div className="flex items-center justify-between mt-4">
+                                    <p className="text-sm text-muted-foreground">
+                                        Showing {(page - 1) * limit + 1} to {Math.min(page * limit, paymentsData.pagination.total)} of {paymentsData.pagination.total} transactions
+                                    </p>
+                                    <Pagination>
+                                        <PaginationContent>
+                                            <PaginationItem>
+                                                <PaginationPrevious onClick={() => setPage((p) => Math.max(1, p - 1))} className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                            </PaginationItem>
+
+                                            {Array.from({ length: paymentsData.pagination.totalPages }, (_, i) => i + 1)
+                                                .filter((p) => {
+                                                    return p === 1 || p === paymentsData.pagination.totalPages || (p >= page - 1 && p <= page + 1)
+                                                })
+                                                .map((p, i, arr) => {
+                                                    const showEllipsisBefore = i > 0 && p - arr[i - 1] > 1
+                                                    return (
+                                                        <React.Fragment key={p}>
+                                                            {showEllipsisBefore && (
+                                                                <PaginationItem>
+                                                                    <PaginationEllipsis />
+                                                                </PaginationItem>
+                                                            )}
+                                                            <PaginationItem>
+                                                                <PaginationLink onClick={() => setPage(p)} isActive={page === p} className="cursor-pointer">
+                                                                    {p}
+                                                                </PaginationLink>
+                                                            </PaginationItem>
+                                                        </React.Fragment>
+                                                    )
+                                                })}
+
+                                            <PaginationItem>
+                                                <PaginationNext onClick={() => setPage((p) => Math.min(paymentsData.pagination.totalPages, p + 1))} className={page === paymentsData.pagination.totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'} />
+                                            </PaginationItem>
+                                        </PaginationContent>
+                                    </Pagination>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </TabsContent>
